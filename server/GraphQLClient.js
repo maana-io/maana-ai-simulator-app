@@ -1,14 +1,14 @@
 // --- External imports
 
 // Apollo imports
-import ApolloClient from "apollo-client";
-import { createHttpLink } from "apollo-link-http";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { setContext } from "apollo-link-context";
+const ApolloClient = require("apollo-client");
+const { createHttpLink } = require("apollo-link-http");
+const { InMemoryCache } = require("apollo-cache-inmemory");
+const { setContext } = require("apollo-link-context");
 
 // --- Internal imports
-import { getUserAuthClient } from "./Auth";
-import UserContext from "./UserContext";
+const { getUserAuthClient } = require("../client/src/util/Auth");
+const UserContext = require("../client/src/util/UserContext");
 
 const createAuthLink = () => {
   return setContext(async (_, { headers }) => {

@@ -1,7 +1,5 @@
 // --- External imports
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
-import { useQuery } from "@apollo/react-hooks";
+import React from "react";
 
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";

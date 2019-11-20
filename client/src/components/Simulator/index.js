@@ -1,7 +1,5 @@
 // --- External imports
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
-import { useQuery, useLazyQuery } from "@apollo/react-hooks";
+import React from "react";
 
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -9,7 +7,6 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
 // --- Internal imports
-import { GET_INFO } from "../../graphql/QService";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,16 +15,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Simulator = () => {
-  // --- State
-
-  // --- Other hooks
-
-  // --- Lazy state update
-
-  // --- Handlers
-
-  // --- Rendering
-
   const classes = useStyles();
 
   return (

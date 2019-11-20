@@ -1,18 +1,13 @@
 // --- External imports
-import { Link } from "react-router-dom";
 import React, { useCallback, useState, useEffect } from "react";
-import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 
 // Material UI
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
 
 // --- Internal imports
-import { createClient } from "../../util/GraphQLClient";
-import { GET_INFO } from "../../graphql/QService";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,8 +19,7 @@ const StarCraft2 = () => {
   // --- State
 
   const [uriBot1, setUriBot1] = useState();
-  const [simulationStatus, setSimulationStatus] = useState("UNKNOWN");
-  const [infoBot1, setInfoBot1] = useState();
+  const [simulationStatus, setSimulationStatus] = useState("<UNKNOWN>");
 
   // --- Other hooks
 
@@ -35,7 +29,7 @@ const StarCraft2 = () => {
     const data = await response.json();
     console.log("runSimulation: data", data);
     setSimulationStatus(data.result);
-  }, [simulationStatus]);
+  }, []);
 
   const getStatus = useCallback(async () => {
     console.log("useCallback: getStatus");
@@ -43,29 +37,16 @@ const StarCraft2 = () => {
     const data = await response.json();
     console.log("getStatus: data", data);
     setSimulationStatus(data.result);
-  });
+  }, []);
 
   useEffect(() => {
     getStatus();
-  }, [simulationStatus]);
-
-  const [
-    getInfo,
-    { loading: loadingBot1, error: errorBot1, data: dataBot1 }
-  ] = useLazyQuery(GET_INFO);
-
-  // --- Lazy state update
-
-  if (!infoBot1 && dataBot1) {
-    setInfoBot1(dataBot1);
-  }
+  }, [getStatus, simulationStatus]);
 
   // --- Handlers
 
   const handleChangeBot1 = newValue => {
-    // const client = createClient({ uri: bot1 });
-    // setBot1Client(client);
-    // getBot1Info();
+    setUriBot1(newValue);
   };
 
   const handleOnClickRun = async () => {
@@ -95,7 +76,6 @@ const StarCraft2 = () => {
           required
         />
       </form>
-      {infoBot1 && <h3>{infoBot1.info.name}</h3>}
       <Button onClick={handleOnClickRun}>Run</Button>
     </Paper>
   );
