@@ -1,0 +1,52 @@
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+
+const useStyles = makeStyles({
+  card: {
+    maxWidth: 345
+  },
+  media: {
+    height: 140
+  }
+});
+
+export default function OpenAIGym() {
+  const classes = useStyles();
+
+  return (
+    <Card className={classes.card}>
+      <CardActionArea>
+        <CardMedia
+          className={classes.media}
+          image="openai-gym.png"
+          title="OpenAI Gym"
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5">
+            OpenAI Gym - Coming Soon!
+          </Typography>
+          <Typography variant="body2" color="textSecondary" component="p">
+            Gym is a toolkit for developing and comparing reinforcement learning
+            algorithms. It supports teaching agents everything from walking to
+            playing games like Pong or Pinball.
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      {/* <CardActions>
+        <Button size="small" color="primary">
+          Share
+        </Button>
+        <Button size="small" color="primary">
+          Learn More
+        </Button>
+      </CardActions> */}
+    </Card>
+  );
+}

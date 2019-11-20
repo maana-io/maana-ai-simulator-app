@@ -32,9 +32,7 @@ const Simulator = () => {
 
   return (
     <Paper className={classes.root}>
-      <Typography variant="h5" component="h3">
-        Welcome to the Maana Q AI Simulator
-      </Typography>
+      <Typography variant="h5">Welcome to the Maana Q AI Simulator</Typography>
       <Typography component="p">
         This application hosts a variety of simulation environments that can be
         interfaced with any conforming GraphQL-based AI Agents

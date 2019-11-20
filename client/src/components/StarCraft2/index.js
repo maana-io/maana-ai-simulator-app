@@ -1,6 +1,6 @@
 // --- External imports
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 
 // Material UI
@@ -24,10 +24,18 @@ const StarCraft2 = () => {
   // --- State
 
   const [uriBot1, setUriBot1] = useState();
-  const [clientBot1, setClientBot1] = useState();
+  const [simulationStatus, setSimulationStatus] = useState("UNKNOWN");
   const [infoBot1, setInfoBot1] = useState();
 
   // --- Other hooks
+
+  const runSimulation = useCallback(async () => {
+    console.log("useCallback");
+    const response = await fetch("/starcraft2/run", { method: "POST" }); //"https://api.randomuser.me");
+    const data = await response.json();
+    console.log("data", data);
+    setSimulationStatus(data.result);
+  }, [simulationStatus]);
 
   const [
     getInfo,
@@ -48,19 +56,23 @@ const StarCraft2 = () => {
     // getBot1Info();
   };
 
+  const handleOnClickRun = async () => {
+    console.log("handleOnClickRun");
+    runSimulation();
+  };
+
   // --- Rendering
 
   const classes = useStyles();
 
   return (
     <Paper className={classes.root}>
-      <Typography variant="h5" component="h3">
-        StarCraft II
-      </Typography>
+      <Typography variant="h5">StarCraft II</Typography>
       <Typography component="p">
         This application hosts a variety of simulation environments that can be
         interfaced with any conforming GraphQL-based AI Agents
       </Typography>
+      <Typography variant="h5">Simulator status: {simulationStatus}</Typography>
       <form>
         <input
           value={uriBot1}
@@ -72,7 +84,7 @@ const StarCraft2 = () => {
         />
       </form>
       {infoBot1 && <h3>{infoBot1.info.name}</h3>}
-      <Button>Start</Button>
+      <Button onClick={handleOnClickRun}>Run</Button>
     </Paper>
   );
 };

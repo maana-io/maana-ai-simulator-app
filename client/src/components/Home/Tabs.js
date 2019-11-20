@@ -12,6 +12,8 @@ import Box from "@material-ui/core/Box";
 // --- Internal imports
 import Simulator from "../Simulator";
 import StarCraft2 from "../StarCraft2";
+import Carla from "../Carla";
+import OpenAIGym from "../OpenAIGym";
 
 // --- Component
 
@@ -66,8 +68,8 @@ export default function SimpleTabs() {
         <Paper square>
           <Tabs
             value={value}
-            indicatorColor="inherit"
-            textColor="inherit"
+            // indicatorColor="inherit"
+            // textColor="inherit"
             onChange={handleChange}
             aria-label="simulator tabs"
           >
@@ -85,10 +87,10 @@ export default function SimpleTabs() {
         <StarCraft2 />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        CARLA Coming Soon!
+        <Carla />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        OpenAI Gym Coming Soon!
+        <OpenAIGym />
       </TabPanel>
     </div>
   );
