@@ -1,20 +1,20 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const port = 5000;
+const port = 3001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Import Routes directory
-require('./routes')(app);
+require("./routes")(app);
 
-app.get('/', (req, res) => {
-  res.send('PORT 5000');
+app.get("/", (req, res) => {
+  res.send(`PORT ${port}`);
 });
 
 app.listen(port, err => {
   if (err) {
     console.log(err);
   }
-  console.log('Listening on port ' + port);
+  console.log("Listening on port " + port);
 });

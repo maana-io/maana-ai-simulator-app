@@ -1,6 +1,6 @@
 // --- External imports
 import { Link } from "react-router-dom";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 
 // Material UI
@@ -30,11 +30,23 @@ const StarCraft2 = () => {
   // --- Other hooks
 
   const runSimulation = useCallback(async () => {
-    console.log("useCallback");
+    console.log("useCallback: runSimulation");
     const response = await fetch("/starcraft2/run", { method: "POST" }); //"https://api.randomuser.me");
     const data = await response.json();
-    console.log("data", data);
+    console.log("runSimulation: data", data);
     setSimulationStatus(data.result);
+  }, [simulationStatus]);
+
+  const getStatus = useCallback(async () => {
+    console.log("useCallback: getStatus");
+    const response = await fetch("/starcraft2/status"); //"https://api.randomuser.me");
+    const data = await response.json();
+    console.log("getStatus: data", data);
+    setSimulationStatus(data.result);
+  });
+
+  useEffect(() => {
+    getStatus();
   }, [simulationStatus]);
 
   const [
