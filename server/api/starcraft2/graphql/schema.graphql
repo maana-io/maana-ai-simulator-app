@@ -1,0 +1,37 @@
+enum Status {
+  Idle
+  Starting
+  Running
+  Stopped
+  Done
+  Error
+}
+
+enum Race {
+  Protoss
+  Zerg
+}
+
+input PlayerInput {
+  race: Race
+}
+
+input ConfigInput {
+  id: ID
+}
+
+type GameStatus {
+  id: ID!
+  status: Status!
+  errors: [String!]!
+  gameLoop: Int
+}
+
+type Query {
+  gameStatus(id: ID!): GameStatus!
+}
+
+type Mutation {
+  run(config: ConfigInput!): GameStatus!
+  stop(id: ID!): GameStatus!
+}
