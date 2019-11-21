@@ -1,4 +1,5 @@
 // --- External imports
+require("dotenv").config();
 const express = require("express");
 const { ApolloServer, gql } = require("apollo-server-express");
 const glue = require("schemaglue");
@@ -9,7 +10,8 @@ const fs = require("fs");
 const { version } = require("../package");
 
 // --- Constants
-const port = 3001;
+const PORT = process.env.PORT;
+const WS_PORT = process.env.WS_PORT;
 
 // --- GraphQL
 
@@ -57,7 +59,7 @@ const graphQLServers = fs.readdirSync(`${__dirname}/api/`).map(file => {
 
 // --- Serve loop
 
-app.listen(port, err => {
+app.listen(PORT, err => {
   if (err) {
     console.log(err);
     return;
@@ -65,6 +67,6 @@ app.listen(port, err => {
   console.log(`\n🚀 Maana Q AI Simulator v${version} serving:`);
 
   graphQLServers.forEach(s =>
-    console.log(`  http://localhost:${port}${s.graphqlPath}`)
+    console.log(`  http://localhost:${PORT}${s.graphqlPath}`)
   );
 });

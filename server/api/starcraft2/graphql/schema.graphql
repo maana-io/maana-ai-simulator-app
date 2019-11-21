@@ -1,12 +1,3 @@
-enum Status {
-  Idle
-  Starting
-  Running
-  Stopped
-  Done
-  Error
-}
-
 enum Race {
   Protoss
   Zerg
@@ -22,9 +13,13 @@ input ConfigInput {
 
 type GameStatus {
   id: ID!
-  status: Status!
+  status: Int!
   errors: [String!]!
   gameLoop: Int
+}
+
+type Observation {
+  gameStatus: GameStatus!
 }
 
 type Query {
@@ -34,4 +29,8 @@ type Query {
 type Mutation {
   run(config: ConfigInput!): GameStatus!
   stop(id: ID!): GameStatus!
+}
+
+type Subscription {
+  onObservation(id: ID!): Observation!
 }

@@ -35,3 +35,13 @@ export const StopMutation = gql`
   }
   ${GameStatusFields}
 `;
+
+export const OnObservation = gql`
+  subscription onObservation($id: ID!) {
+    onObservation(id: $id) {
+      gameStatus {
+        ...GameStatusFields
+      }
+    }
+  }
+`;

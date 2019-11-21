@@ -1,21 +1,10 @@
 // --- External imports
 const { createAgent, createEngine, createPlayer } = require("@node-sc2/core");
-const { Difficulty, Race } = require("@node-sc2/core/constants/enums");
+const { Difficulty, Race, Status } = require("@node-sc2/core/constants/enums");
 const gql = require("graphql-tag");
 
 // --- Internal imports
 const { createClient } = require("../../../GraphQLClient");
-
-// --- Constants
-
-const Status = {
-  Idle: "Idle",
-  Starting: "Starting",
-  Running: "Running",
-  Stopped: "Stopped",
-  Done: "Done",
-  Error: "Error"
-};
 
 // --- Implementation
 
@@ -31,7 +20,7 @@ extractGameStatus = gameState => ({
 
 const newGameState = ({ id }) => ({
   id,
-  status: Status.Idle,
+  status: Status.UNKNOWN,
   gameLoop: 0,
   errors: []
 });
@@ -78,7 +67,7 @@ const run = async ({ config }) => {
       const { units, actions, map, frame } = resources.get();
       console.log("onGameStarted");
       const state = getGameState({ id });
-      state.status = Status.Running;
+      state.status = Status.IN_GAME;
       // console.log("onGameStarted", frame.getObservation());
     },
 
@@ -87,7 +76,7 @@ const run = async ({ config }) => {
       const { gameLoop } = frame.getObservation();
 
       const state = getGameState({ id });
-      if (state.status === "Running") {
+      if (state.status === Status.IN_GAME) {
         console.log("onStep", gameLoop);
         state.gameLoop = gameLoop;
         const { client } = state.bot1;
@@ -116,7 +105,7 @@ const run = async ({ config }) => {
     state.connection = await engine.connect();
     console.log("... connected: ", state.connection);
 
-    state.status = Status.Starting;
+    state.status = Status.LAUNCHED;
 
     state.runGame = engine
       .runGame("Ladder2019Season3/AcropolisLE.SC2Map", [
@@ -126,10 +115,10 @@ const run = async ({ config }) => {
       .then(rg => {
         console.log("runGame complete", rg);
         const state = getGameState({ id });
-        state.status = Status.Done;
+        state.status = Status.ENDED;
       });
   } catch (e) {
-    state.status = Status.Error;
+    state.status = Status.QUIT;
     state.errors = [e];
   }
   return extractGameStatus(state);
@@ -138,7 +127,7 @@ const run = async ({ config }) => {
 const stop = async ({ id }) => {
   const state = getGameState({ id });
   // console.log("starcraft2/stop", state);
-  state.status = Status.Stopped;
+  state.status = Status.QUIT;
   return extractGameStatus(state);
 };
 
