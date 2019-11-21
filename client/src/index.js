@@ -27,7 +27,7 @@ const authClient = getUserAuthClient();
 // - allow this service to be a client of a remote service
 //
 const uri = process.env.REACT_APP_MAANA_ENDPOINT;
-console.log("REACT_APP_MAANA_ENDPOINT", uri);
+// console.log("REACT_APP_MAANA_ENDPOINT", uri);
 
 const authLink = setContext((_, { headers }) => {
   // return the headers to the context so httpLink can read them
