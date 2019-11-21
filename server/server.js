@@ -26,7 +26,7 @@ const createGraphQLServer = ({ app, endpoint, gluePath, context }) => {
     context
   });
 
-  server.applyMiddleware({ endpoint, app });
+  server.applyMiddleware({ path: endpoint, app });
 
   return server;
 };
@@ -46,7 +46,7 @@ const context = {
 const graphQLServers = fs.readdirSync(`${__dirname}/api/`).map(file => {
   console.log("Generating GraphQL endpoint for", file);
 
-  const endpoint = "starcraft2/graphql";
+  const endpoint = `/${file}/graphql`;
   return createGraphQLServer({
     app,
     endpoint,
