@@ -1,6 +1,6 @@
 // --- External imports
-import React, { useContext, useState } from "react";
-import { useQuery, useSubscription } from "react-apollo";
+import React, { useContext } from "react";
+import { useQuery } from "react-apollo";
 
 import { Status, StatusId } from "@node-sc2/core/constants/enums";
 
@@ -9,14 +9,13 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 
 // --- Internal imports
-import { OnObservation } from "./graphql";
+import { ObserveQuery } from "./graphql";
 import GameStatusContext from "./GameStatusContext";
 
 // --- Constants
@@ -51,21 +50,25 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const GameObservation = ({ id }) => {
+const GameObservation = () => {
   // --- Hooks
   const { gameStatus } = useContext(GameStatusContext);
 
-  const [observation, setObservation] = useState();
-  const { data, loading, error } = useSubscription(OnObservation, {
-    variables: { id },
-    onComplete: data => {
-      console.log("onSubscription", data);
-    }
+  const { data } = useQuery(ObserveQuery, {
+    variables: { id: gameStatus.id },
+    fetchPolicy: "no-cache",
+    pollInterval: 1000
+    // onCompleted: data => {
+    //   console.log("onCompleted2", data);
+    // }
   });
 
-  const classes = useStyles();
+  let observation = null;
+  if (data) {
+    observation = data.observe;
+  }
 
-  // --- Rendering
+  const classes = useStyles();
 
   // --- Rendering
   return (
@@ -80,7 +83,11 @@ const GameObservation = ({ id }) => {
             label="Status"
             className={classes.textField}
             margin="normal"
-            value={StatusId[gameStatus.status]}
+            value={
+              StatusId[
+                observation ? observation.gameStatus.status : gameStatus.status
+              ]
+            }
             InputProps={{
               readOnly: true
             }}
@@ -90,20 +97,20 @@ const GameObservation = ({ id }) => {
             label="Game Loop"
             className={classes.textField}
             margin="normal"
-            value={gameStatus.gameLoop}
+            value={observation ? observation.gameStatus.gameLoop : 0}
             InputProps={{
               readOnly: true
             }}
           />
         </div>
-        {gameStatus.errors.length && (
+        {gameStatus.errors.length > 0 && (
           <div>
             <Typography variant="subtitle1">Errors</Typography>
             <List className={classes.listRoot}>
-              {gameStatus.errors.map(error => {
+              {gameStatus.errors.map((error, i) => {
                 const jsError = JSON.parse(error);
                 return (
-                  <ListItem alignItems="flex-start">
+                  <ListItem alignItems="flex-start" key={`error:${i}`}>
                     <ListItemText
                       primary={jsError.error.code}
                       secondary={
@@ -127,9 +134,7 @@ const GameObservation = ({ id }) => {
           </div>
         )}
       </form>
-      {/* {loading && "Loading..."}
-      {error && `Error: ${JSON.stringify(error)}`} */}
-      {observation && "Observation"}
+      {gameStatus.status === Status.IN_GAME && observation && "Observation"}
     </Paper>
   );
 };

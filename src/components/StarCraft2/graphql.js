@@ -36,12 +36,13 @@ export const StopMutation = gql`
   ${GameStatusFields}
 `;
 
-export const OnObservation = gql`
-  subscription onObservation($id: ID!) {
-    onObservation(id: $id) {
+export const ObserveQuery = gql`
+  query observe($id: ID!) {
+    observe(id: $id) {
       gameStatus {
         ...GameStatusFields
       }
     }
   }
+  ${GameStatusFields}
 `;

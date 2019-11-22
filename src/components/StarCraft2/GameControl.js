@@ -1,7 +1,7 @@
 // --- External imports
 import React, { useContext, useState } from "react";
-import { useMutation, useQuery } from "react-apollo";
-import { Race, RaceId, Status, StatusId } from "@node-sc2/core/constants/enums";
+import { useMutation } from "react-apollo";
+import { Race, RaceId, Status } from "@node-sc2/core/constants/enums";
 
 // Material UI
 import Button from "@material-ui/core/Button";
@@ -10,22 +10,26 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
+import Box from "@material-ui/core/Box";
 
 // --- Internal imports
-import { GameStatusQuery, RunMutation, StopMutation } from "./graphql";
+import { RunMutation, StopMutation } from "./graphql";
 import GameStatusContext from "./GameStatusContext";
 
 // --- Styles
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: theme.spacing(2),
-    textAlign: "center",
+    width: "100%",
+    display: "flex",
+    flexWrap: "wrap",
+    padding: theme.spacing(1),
     color: theme.palette.text.secondary
   },
-  container: {
-    display: "flex",
-    flexWrap: "wrap"
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    flexBasis: "33.33%",
+    flexShrink: 0
   },
   textField: {
     marginLeft: theme.spacing(1),
@@ -40,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const GameControl = ({ id }) => {
+const GameControl = () => {
   // --- Hooks
   const { gameStatus, setGameStatus } = useContext(GameStatusContext);
 
@@ -50,12 +54,12 @@ const GameControl = ({ id }) => {
   const [uriBot2, setUriBot2] = useState();
 
   const [run] = useMutation(RunMutation, {
-    variables: { config: { id } },
+    variables: { config: { id: gameStatus.id } },
     onCompleted: data => setGameStatus(data.run)
   });
 
   const [stop] = useMutation(StopMutation, {
-    variables: { id },
+    variables: { id: gameStatus.id },
     onCompleted: data => setGameStatus(data.stop)
   });
 
@@ -81,80 +85,75 @@ const GameControl = ({ id }) => {
       gameStatus.status === Status.INIT_GAME);
 
   return (
-    <Paper>
-      <Typography gutterBottom variant="h5">
-        Configuration
-      </Typography>
-      <form className={classes.container} noValidate autoComplete="off">
-        <div>
-          <TextField
-            id="raceBot1"
-            select
-            label="Player 1 Race"
-            disabled={disableControls}
-            className={classes.textField}
-            value={raceBot1}
-            onChange={e => setRaceBot1(e.target.value)}
-            SelectProps={{
-              MenuProps: {
-                className: classes.menu
-              }
-            }}
-            margin="normal"
-          >
-            {Object.keys(RaceId).map(raceId => (
-              <MenuItem key={`raceId:${raceId}`} value={raceId}>
-                {RaceId[raceId]}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            id="uriBot1"
-            label="Player 1 Bot URI"
-            disabled={disableControls}
-            defaultValue="Computer"
-            className={classes.textField}
-            margin="normal"
-            value={uriBot1}
-            onChange={e => setUriBot1(e.target.value)}
-          />
-        </div>
-      </form>
-      <form className={classes.container} noValidate autoComplete="off">
-        <div>
-          <TextField
-            id="raceBot2"
-            select
-            label="Player 2 Race"
-            disabled={disableControls}
-            className={classes.textField}
-            value={raceBot2}
-            onChange={e => setRaceBot2(e.target.value)}
-            SelectProps={{
-              MenuProps: {
-                className: classes.menu
-              }
-            }}
-            margin="normal"
-          >
-            {Object.keys(RaceId).map(raceId => (
-              <MenuItem key={`raceId:${raceId}`} value={raceId}>
-                {RaceId[raceId]}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            id="uriBot2"
-            label="Player 2 Bot URI"
-            disabled={disableControls}
-            defaultValue="Computer"
-            className={classes.textField}
-            margin="normal"
-            value={uriBot2}
-            onChange={e => setUriBot2(e.target.value)}
-          />
-        </div>
-      </form>
+    <Paper className={classes.paper}>
+      <Typography className={classes.heading}>Player One</Typography>
+      <Box>
+        <TextField
+          id="raceBot1"
+          select
+          label="Race"
+          disabled={disableControls}
+          className={classes.textField}
+          value={raceBot1}
+          onChange={e => setRaceBot1(e.target.value)}
+          SelectProps={{
+            MenuProps: {
+              className: classes.menu
+            }
+          }}
+          margin="normal"
+        >
+          {Object.keys(RaceId).map(raceId => (
+            <MenuItem key={`raceId:${raceId}`} value={raceId}>
+              {RaceId[raceId]}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          id="uriBot1"
+          label="URI"
+          disabled={disableControls}
+          defaultValue="Computer"
+          className={classes.textField}
+          margin="normal"
+          value={uriBot1}
+          onChange={e => setUriBot1(e.target.value)}
+        />
+      </Box>
+      <Typography className={classes.heading}>Player Two</Typography>
+      <Box>
+        <TextField
+          id="raceBot2"
+          select
+          label="Race"
+          disabled={disableControls}
+          className={classes.textField}
+          value={raceBot2}
+          onChange={e => setRaceBot2(e.target.value)}
+          SelectProps={{
+            MenuProps: {
+              className: classes.menu
+            }
+          }}
+          margin="normal"
+        >
+          {Object.keys(RaceId).map(raceId => (
+            <MenuItem key={`raceId:${raceId}`} value={raceId}>
+              {RaceId[raceId]}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          id="uriBot2"
+          label="URI"
+          disabled={disableControls}
+          defaultValue="Computer"
+          className={classes.textField}
+          margin="normal"
+          value={uriBot2}
+          onChange={e => setUriBot2(e.target.value)}
+        />
+      </Box>
       <Button
         disabled={!!!gameStatus}
         onClick={handleOnClickRun}

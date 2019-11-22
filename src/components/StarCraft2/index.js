@@ -1,6 +1,5 @@
 // --- External imports
 import React, { useState } from "react";
-import { Status } from "@node-sc2/core/constants/enums";
 import { useQuery } from "react-apollo";
 
 // Material UI
@@ -38,12 +37,7 @@ const useStyles = makeStyles(theme => ({
 const StarCraft2 = () => {
   // --- Hooks
   const id = "0";
-  const [gameStatus, setGameStatus] = useState({
-    id,
-    status: Status.UNKOWN,
-    errors: [],
-    gameLoop: 0
-  });
+  const [gameStatus, setGameStatus] = useState(null);
 
   const { loading, error } = useQuery(GameStatusQuery, {
     variables: { id },
@@ -95,7 +89,9 @@ const StarCraft2 = () => {
             </Card>
           </Grid>
           <Grid item xs={9}>
-            <Simulator />
+            {loading && "Loading simulator...."}
+            {error && `Error loading simulator: ${error}`}
+            {gameStatus && <Simulator />}
           </Grid>
         </Grid>
       </GameStatusContext.Provider>
