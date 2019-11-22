@@ -39,28 +39,19 @@ const useStyles = makeStyles(theme => ({
 const Simulator = () => {
   // --- Hooks
 
-  const [gameId, setGameId] = useState("0");
-  const { loading, error, data } = useQuery(GameStatusQuery, {
-    variables: { id: gameId }
-  });
   const classes = useStyles();
 
   // --- Handlers
 
   // --- Rendering
 
-  if (loading) return "Loading...";
-  if (error) return `Simulator error: ${error.message}`;
-
-  const { gameStatus } = data;
-
   return (
     <Grid container spacing={3}>
-      <Grid item xs={6}>
-        <GameControl id={gameId} />
+      <Grid item xs={5}>
+        <GameControl />
       </Grid>
-      <Grid item xs={6}>
-        <GameObservation id={gameId} />
+      <Grid item xs={7}>
+        <GameObservation />
       </Grid>
     </Grid>
   );

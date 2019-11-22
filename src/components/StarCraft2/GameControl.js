@@ -1,5 +1,5 @@
 // --- External imports
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
 import { Race, RaceId, Status, StatusId } from "@node-sc2/core/constants/enums";
 
@@ -13,6 +13,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 // --- Internal imports
 import { GameStatusQuery, RunMutation, StopMutation } from "./graphql";
+import GameStatusContext from "./GameStatusContext";
 
 // --- Styles
 
@@ -41,15 +42,12 @@ const useStyles = makeStyles(theme => ({
 
 const GameControl = ({ id }) => {
   // --- Hooks
-  const [gameStatus, setGameStatus] = useState();
-  const [raceBot1, setRaceBot1] = useState(Race.RANDOM);
-  const [uriBot1, setUriBot1] = useState();
+  const { gameStatus, setGameStatus } = useContext(GameStatusContext);
 
-  const { loading, error } = useQuery(GameStatusQuery, {
-    variables: { id },
-    pollInterval: 1000,
-    onCompleted: data => setGameStatus(data.gameStatus)
-  });
+  const [raceBot1, setRaceBot1] = useState(Race.RANDOM);
+  const [raceBot2, setRaceBot2] = useState(Race.RANDOM);
+  const [uriBot1, setUriBot1] = useState();
+  const [uriBot2, setUriBot2] = useState();
 
   const [run] = useMutation(RunMutation, {
     variables: { config: { id } },
@@ -65,15 +63,6 @@ const GameControl = ({ id }) => {
 
   // --- Handlers
 
-  const handleChangeRaceBot1 = newValue => {
-    console.log("handleChangeRaceBot1", newValue);
-    setRaceBot1(newValue);
-  };
-
-  const handleChangeUriBot1 = newValue => {
-    setUriBot1(newValue);
-  };
-
   const handleOnClickRun = async () => {
     if (gameStatus.Status === Status.IN_GAME) {
       stop();
@@ -84,9 +73,6 @@ const GameControl = ({ id }) => {
   };
 
   // --- Rendering
-
-  if (loading) return "Loading...";
-  if (error) return `Control error! ${error}`;
 
   const disableControls =
     gameStatus &&
@@ -108,15 +94,13 @@ const GameControl = ({ id }) => {
             disabled={disableControls}
             className={classes.textField}
             value={raceBot1}
-            onChange={e => handleChangeRaceBot1(e.target.value)}
+            onChange={e => setRaceBot1(e.target.value)}
             SelectProps={{
               MenuProps: {
                 className: classes.menu
               }
             }}
-            helperText="Select a race"
             margin="normal"
-            variant="outlined"
           >
             {Object.keys(RaceId).map(raceId => (
               <MenuItem key={`raceId:${raceId}`} value={raceId}>
@@ -130,39 +114,44 @@ const GameControl = ({ id }) => {
             disabled={disableControls}
             defaultValue="Computer"
             className={classes.textField}
-            helperText="Optional GraphQL endpoint"
             margin="normal"
-            variant="outlined"
             value={uriBot1}
-            onChange={e => handleChangeUriBot1(e.target.value)}
+            onChange={e => setUriBot1(e.target.value)}
           />
         </div>
+      </form>
+      <form className={classes.container} noValidate autoComplete="off">
         <div>
           <TextField
-            id="status"
-            label="Status"
+            id="raceBot2"
+            select
+            label="Player 2 Race"
             disabled={disableControls}
             className={classes.textField}
-            helperText="Game engine status"
-            margin="normal"
-            variant="outlined"
-            value={StatusId[gameStatus ? gameStatus.status : Status.UNKNOWN]}
-            InputProps={{
-              readOnly: true
+            value={raceBot2}
+            onChange={e => setRaceBot2(e.target.value)}
+            SelectProps={{
+              MenuProps: {
+                className: classes.menu
+              }
             }}
-          />
+            margin="normal"
+          >
+            {Object.keys(RaceId).map(raceId => (
+              <MenuItem key={`raceId:${raceId}`} value={raceId}>
+                {RaceId[raceId]}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
-            id="gameLoop"
-            label="Game Loop"
+            id="uriBot2"
+            label="Player 2 Bot URI"
             disabled={disableControls}
+            defaultValue="Computer"
             className={classes.textField}
-            helperText="Game steps played"
             margin="normal"
-            variant="outlined"
-            value={gameStatus ? gameStatus.gameLoop : 0}
-            InputProps={{
-              readOnly: true
-            }}
+            value={uriBot2}
+            onChange={e => setUriBot2(e.target.value)}
           />
         </div>
       </form>
