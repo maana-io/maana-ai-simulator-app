@@ -36,6 +36,8 @@ const getGameState = ({ id }) => {
 
 const setGameState = ({ state }) => (gameState[state.id] = state);
 
+const resetGameState = ({ id }) => delete gameState[id];
+
 const GET_INFO = gql`
   query getInfo {
     info {
@@ -52,7 +54,7 @@ const newBot = ({ agent, uri, token }) => {
 };
 
 const run = async ({ config }) => {
-  console.log("Running StarCraft II simulation...");
+  console.log("Running StarCraft II s  imulation...");
 
   const id = config.id || 0;
   const uri =
@@ -60,6 +62,7 @@ const run = async ({ config }) => {
     "https://lastknowngood.knowledge.maana.io:8443/service/b00a2def-69a1-4238-80f7-c7920aa0afd4/graphql";
   const token = config.token || "";
 
+  resetGameState({ id });
   const state = getGameState({ id });
 
   const agent = createAgent({
@@ -105,7 +108,7 @@ const run = async ({ config }) => {
     state.connection = await engine.connect();
     console.log("... connected: ", state.connection);
 
-    state.status = Status.LAUNCHED;
+    state.status = Status.INIT_GAME;
 
     state.runGame = engine
       .runGame("Ladder2019Season3/AcropolisLE.SC2Map", [
@@ -119,21 +122,19 @@ const run = async ({ config }) => {
       });
   } catch (e) {
     state.status = Status.QUIT;
-    state.errors = [e];
+    state.errors = [JSON.stringify(e)];
   }
   return extractGameStatus(state);
 };
 
 const stop = async ({ id }) => {
   const state = getGameState({ id });
-  // console.log("starcraft2/stop", state);
   state.status = Status.QUIT;
   return extractGameStatus(state);
 };
 
 const gameStatus = async ({ id }) => {
   const state = getGameState({ id });
-  // console.log("starcraft2/update", state);
   return extractGameStatus(state);
 };
 

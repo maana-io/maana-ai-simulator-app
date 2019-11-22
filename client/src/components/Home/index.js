@@ -7,6 +7,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Link from "@material-ui/core/Link";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 
@@ -28,8 +29,6 @@ const useStyles = makeStyles(theme => ({
 export function Home() {
   const classes = useStyles();
 
-  // <Link to="/logout">Logout</Link>
-
   return (
     <div className={classes.root}>
       <AppBar color="inherit" position="static">
@@ -45,7 +44,9 @@ export function Home() {
           <Typography variant="h6" className={classes.title}>
             Maana Q: AI Simulator
           </Typography>
-          <Button color="inherit">Logout</Button>
+          <Button href="/logout" color="inherit">
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
       <Tabs />

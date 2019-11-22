@@ -1,7 +1,7 @@
 // --- External imports
 import React, { useCallback, useState, useEffect } from "react";
 import { useMutation, useQuery } from "react-apollo";
-import { Race, RaceId, Status } from "@node-sc2/core/constants/enums";
+import { Race, RaceId, Status, StatusId } from "@node-sc2/core/constants/enums";
 
 // Material UI
 import Button from "@material-ui/core/Button";
@@ -45,24 +45,20 @@ const GameControl = ({ id }) => {
   const [raceBot1, setRaceBot1] = useState(Race.RANDOM);
   const [uriBot1, setUriBot1] = useState();
 
-  const { loading, error, data } = useQuery(GameStatusQuery, {
-    variables: { id }
+  const { loading, error } = useQuery(GameStatusQuery, {
+    variables: { id },
+    pollInterval: 1000,
+    onCompleted: data => setGameStatus(data.gameStatus)
   });
 
   const [run] = useMutation(RunMutation, {
     variables: { config: { id } },
-    update(cache, { data }) {
-      console.log("run", data);
-      setGameStatus(data.run.status);
-    }
+    onCompleted: data => setGameStatus(data.run)
   });
 
   const [stop] = useMutation(StopMutation, {
     variables: { id },
-    update(cache, { data }) {
-      console.log("stop", data);
-      setGameStatus(cache, data.stop.status);
-    }
+    onCompleted: data => setGameStatus(data.stop)
   });
 
   const classes = useStyles();
@@ -82,6 +78,7 @@ const GameControl = ({ id }) => {
     if (gameStatus.Status === Status.IN_GAME) {
       stop();
     } else {
+      setGameStatus({ ...gameStatus, status: Status.LAUNCHED });
       run();
     }
   };
@@ -89,12 +86,13 @@ const GameControl = ({ id }) => {
   // --- Rendering
 
   if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
+  if (error) return `Control error! ${error}`;
 
-  if (!gameStatus && data) {
-    console.log("gameStatus", gameStatus);
-    setGameStatus(data.gameStatus);
-  }
+  const disableControls =
+    gameStatus &&
+    (gameStatus.status === Status.IN_GAME ||
+      gameStatus.status === Status.LAUNCHED ||
+      gameStatus.status === Status.INIT_GAME);
 
   return (
     <Paper>
@@ -106,8 +104,8 @@ const GameControl = ({ id }) => {
           <TextField
             id="raceBot1"
             select
-            label="Race"
-            disabled={gameStatus && gameStatus.status !== Status.IN_GAME}
+            label="Player 1 Race"
+            disabled={disableControls}
             className={classes.textField}
             value={raceBot1}
             onChange={e => handleChangeRaceBot1(e.target.value)}
@@ -116,7 +114,7 @@ const GameControl = ({ id }) => {
                 className: classes.menu
               }
             }}
-            helperText="Player race"
+            helperText="Select a race"
             margin="normal"
             variant="outlined"
           >
@@ -128,8 +126,8 @@ const GameControl = ({ id }) => {
           </TextField>
           <TextField
             id="uriBot1"
-            label="URI"
-            disabled={gameStatus && gameStatus.status !== Status.IN_GAME}
+            label="Player 1 Bot URI"
+            disabled={disableControls}
             defaultValue="Computer"
             className={classes.textField}
             helperText="Optional GraphQL endpoint"
@@ -139,6 +137,34 @@ const GameControl = ({ id }) => {
             onChange={e => handleChangeUriBot1(e.target.value)}
           />
         </div>
+        <div>
+          <TextField
+            id="status"
+            label="Status"
+            disabled={disableControls}
+            className={classes.textField}
+            helperText="Game engine status"
+            margin="normal"
+            variant="outlined"
+            value={StatusId[gameStatus ? gameStatus.status : Status.UNKNOWN]}
+            InputProps={{
+              readOnly: true
+            }}
+          />
+          <TextField
+            id="gameLoop"
+            label="Game Loop"
+            disabled={disableControls}
+            className={classes.textField}
+            helperText="Game steps played"
+            margin="normal"
+            variant="outlined"
+            value={gameStatus ? gameStatus.gameLoop : 0}
+            InputProps={{
+              readOnly: true
+            }}
+          />
+        </div>
       </form>
       <Button
         disabled={!!!gameStatus}
@@ -146,11 +172,7 @@ const GameControl = ({ id }) => {
         variant="outlined"
         className={classes.button}
       >
-        {gameStatus &&
-        (gameStatus.status === Status.IN_GAME ||
-          gameStatus.status === Status.LAUNCHED)
-          ? "Stop"
-          : "Run"}
+        {disableControls ? "Stop" : "Run"}
       </Button>
     </Paper>
   );

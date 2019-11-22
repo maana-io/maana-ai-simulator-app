@@ -16,7 +16,7 @@ import Grid from "@material-ui/core/Grid";
 // --- Internal imports
 import { GameStatusQuery, OnObservation } from "./graphql";
 import GameControl from "./GameControl";
-import GameStatus from "./GameStatus";
+import GameObservation from "./GameObservation";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,7 +60,7 @@ const Simulator = () => {
         <GameControl id={gameId} />
       </Grid>
       <Grid item xs={6}>
-        <GameStatus gameStatus={gameStatus} />
+        <GameObservation id={gameId} />
       </Grid>
     </Grid>
   );
