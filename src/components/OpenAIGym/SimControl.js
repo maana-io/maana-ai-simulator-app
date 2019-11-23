@@ -1,7 +1,6 @@
 // --- External imports
 import React, { useContext, useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
-import { Race, RaceId, Status } from "@node-sc2/core/constants/enums";
 
 // Material UI
 import Button from "@material-ui/core/Button";
@@ -10,10 +9,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import Box from "@material-ui/core/Box";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
@@ -107,7 +104,7 @@ export default function SimControl() {
   return (
     <Paper className={classes.paper}>
       <Typography gutterBottom variant="h5">
-        Configuration
+        Control
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12}>

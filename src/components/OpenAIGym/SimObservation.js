@@ -11,6 +11,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
+import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import { Codes, Modes } from "./enums";
@@ -23,27 +24,14 @@ import SimStatusContext from "./SimStatusContext";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary
-  },
-  container: {
-    display: "flex",
-    flexWrap: "wrap"
+    padding: theme.spacing(1)
   },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 200
+    width: "97%"
   },
-  button: {
-    margin: theme.spacing(1)
-  },
-  listRoot: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
-  },
+  listRoot: {},
   input: {
     display: "none"
   }
@@ -70,12 +58,12 @@ export default function SimObservation() {
 
   // --- Rendering
   return (
-    <Paper>
+    <Paper className={classes.paper}>
       <Typography gutterBottom variant="h5">
         Observation
       </Typography>
-      <form className={classes.container} noValidate autoComplete="off">
-        <div>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={12}>
           <TextField
             id="status"
             label="Status"
@@ -86,9 +74,9 @@ export default function SimObservation() {
               readOnly: true
             }}
           />
-        </div>
+        </Grid>
         {simStatus.errors.length > 0 && (
-          <div>
+          <Grid item xs={12} sm={12}>
             <Typography variant="subtitle1">Errors</Typography>
             <List className={classes.listRoot}>
               {simStatus.errors.map((error, i) => {
@@ -115,10 +103,14 @@ export default function SimObservation() {
               })}
               <Divider />
             </List>
-          </div>
+          </Grid>
         )}
-      </form>
-      {simStatus.code === Codes.Running && observation && "Observation"}
+        {observation && (
+          <Grid item xs={12} sm={12}>
+            <Typography variant="subtitle1">Errors</Typography>
+          </Grid>
+        )}
+      </Grid>
     </Paper>
   );
 }
