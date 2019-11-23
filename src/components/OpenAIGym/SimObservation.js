@@ -1,5 +1,5 @@
 // --- External imports
-import React, { useContext } from "react";
+import React from "react";
 import { useQuery } from "react-apollo";
 
 // Material UI
@@ -14,9 +14,9 @@ import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
-import { Codes, Modes } from "./enums";
+import ErrorCard from "../ErrorCard";
 import { ObserveQuery } from "./graphql";
-import SimStatusContext from "./SimStatusContext";
+import { Codes } from "./enums";
 
 // --- Constants
 
@@ -38,10 +38,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SimObservation() {
-  // --- Hooks
-  const { simStatus } = useContext(SimStatusContext);
-
-  const { data } = useQuery(ObserveQuery, {
+  const { loading, error, data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
     pollInterval: 1000
     // onCompleted: data => {
@@ -49,10 +46,15 @@ export default function SimObservation() {
     // }
   });
 
-  let observation = null;
+  let observation;
+  let simStatus;
   if (data) {
     observation = data.observe;
+    simStatus = observation.simStatus;
   }
+
+  // console.log("observation", observation);
+  // console.log("simStatus", simStatus);
 
   const classes = useStyles();
 
@@ -62,55 +64,84 @@ export default function SimObservation() {
       <Typography gutterBottom variant="h5">
         Observation
       </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={12}>
-          <TextField
-            id="status"
-            label="Status"
-            className={classes.textField}
-            margin="normal"
-            value={observation ? observation.simStatus.code : simStatus.code}
-            InputProps={{
-              readOnly: true
-            }}
-          />
+      {loading && "Loading simulator...."}
+      {error && <ErrorCard error={error} />}
+      {data && (
+        <Grid container spacing={3}>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="status"
+              label="Status"
+              disabled={!!!observation}
+              className={classes.textField}
+              margin="normal"
+              value={observation ? observation.simStatus.code : Codes.Unknown}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="episode"
+              label="Episode"
+              className={classes.textField}
+              margin="normal"
+              value={observation ? observation.episode : 0}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="step"
+              label="Step"
+              className={classes.textField}
+              margin="normal"
+              value={observation ? observation.step : 0}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          {simStatus.errors.length > 0 && (
+            <Grid item xs={12} sm={12}>
+              <Typography variant="subtitle1">Errors</Typography>
+              <List className={classes.listRoot}>
+                {simStatus.errors.map((error, i) => {
+                  const jsError = JSON.parse(error);
+                  return (
+                    <ListItem alignItems="flex-start" key={`error:${i}`}>
+                      <ListItemText
+                        primary={jsError.error.code}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              className={classes.inline}
+                              color="textPrimary"
+                            >
+                              {jsError.message}
+                            </Typography>
+                          </React.Fragment>
+                        }
+                      />
+                    </ListItem>
+                  );
+                })}
+                <Divider />
+              </List>
+            </Grid>
+          )}
+          {observation && (
+            <Grid item xs={12} sm={12}>
+              <Typography variant="subtitle1">Errors</Typography>
+            </Grid>
+          )}
         </Grid>
-        {simStatus.errors.length > 0 && (
-          <Grid item xs={12} sm={12}>
-            <Typography variant="subtitle1">Errors</Typography>
-            <List className={classes.listRoot}>
-              {simStatus.errors.map((error, i) => {
-                const jsError = JSON.parse(error);
-                return (
-                  <ListItem alignItems="flex-start" key={`error:${i}`}>
-                    <ListItemText
-                      primary={jsError.error.code}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                            component="span"
-                            variant="body2"
-                            className={classes.inline}
-                            color="textPrimary"
-                          >
-                            {jsError.message}
-                          </Typography>
-                        </React.Fragment>
-                      }
-                    />
-                  </ListItem>
-                );
-              })}
-              <Divider />
-            </List>
-          </Grid>
-        )}
-        {observation && (
-          <Grid item xs={12} sm={12}>
-            <Typography variant="subtitle1">Errors</Typography>
-          </Grid>
-        )}
-      </Grid>
+      )}
     </Paper>
   );
 }

@@ -1,5 +1,5 @@
 // --- External imports
-import React, { useState } from "react";
+import React from "react";
 import { useQuery } from "react-apollo";
 
 // Material UI
@@ -7,10 +7,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
-import SimInfo from "./SimInfo";
+import ErrorCard from "../ErrorCard";
+import SimInfo from "../SimInfo";
 import SimControl from "./SimControl";
 import SimObservation from "./SimObservation";
-import SimStatusContext from "./SimStatusContext";
 import { SimStatusQuery } from "./graphql";
 
 const useStyles = makeStyles(theme => ({
@@ -21,45 +21,39 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function OpenAIGym() {
-  // --- Hooks
-  const [simStatus, setSimStatus] = useState(null);
-
-  const { loading, error } = useQuery(SimStatusQuery, {
-    pollInterval: 1000,
-    onCompleted: data => {
-      console.log("onCompleted: ", data);
-      setSimStatus(data.simStatus);
-    }
+  const { loading, error, data } = useQuery(SimStatusQuery, {
+    pollInterval: 1000
   });
 
   const classes = useStyles();
 
   return (
-    <SimStatusContext.Provider
-      value={{
-        simStatus,
-        setSimStatus
-      }}
-    >
-      <div className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={3} sm={3}>
-            <SimInfo />
-          </Grid>
-          {loading && "Loading simulator...."}
-          {error && `Error loading simulator: ${error}`}
-          {simStatus && (
-            <React.Fragment>
-              <Grid item xs={5} sm={5}>
-                <SimControl />
-              </Grid>
-              <Grid item xs={4} sm={4}>
-                <SimObservation />
-              </Grid>
-            </React.Fragment>
-          )}
+    <div className={classes.root}>
+      <Grid container spacing={3}>
+        <Grid item xs={3} sm={3}>
+          <SimInfo
+            image="openai-gym.png"
+            title="OpenAI Gym"
+            description="Gym is a toolkit for developing and comparing reinforcement learning algorithms. It supports teaching agents everything from walking to playing games like Pong or Pinball."
+          />
         </Grid>
-      </div>
-    </SimStatusContext.Provider>
+        <Grid item xs={9} sm={9}>
+          <Grid container spacing={3}>
+            {loading && "Loading simulator...."}
+            {error && <ErrorCard error={error} />}
+            {data && (
+              <React.Fragment>
+                <Grid item xs={6} sm={6}>
+                  <SimControl simStatus={data.simStatus} />
+                </Grid>
+                <Grid item xs={6} sm={6}>
+                  <SimObservation simStatus={data.simStatus} />
+                </Grid>
+              </React.Fragment>
+            )}
+          </Grid>
+        </Grid>
+      </Grid>
+    </div>
   );
 }

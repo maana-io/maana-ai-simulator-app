@@ -57,7 +57,7 @@ export default function SimObservation() {
   const { data } = useQuery(ObserveQuery, {
     variables: { id: simStatus.id },
     fetchPolicy: "no-cache",
-    pollInterval: 1000
+    pollInterval: 100000
     // onCompleted: data => {
     //   console.log("onCompleted2", data);
     // }
