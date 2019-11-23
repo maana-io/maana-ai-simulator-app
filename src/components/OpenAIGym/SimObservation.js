@@ -2,8 +2,6 @@
 import React, { useContext } from "react";
 import { useQuery } from "react-apollo";
 
-import { Status, StatusId } from "@node-sc2/core/constants/enums";
-
 // Material UI
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
@@ -15,6 +13,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 
 // --- Internal imports
+import { Codes, Modes } from "./enums";
 import { ObserveQuery } from "./graphql";
 import SimStatusContext from "./SimStatusContext";
 
@@ -67,8 +66,6 @@ export default function SimObservation() {
     observation = data.observe;
   }
 
-  console.log("simStatus", simStatus);
-
   const classes = useStyles();
 
   // --- Rendering
@@ -84,11 +81,7 @@ export default function SimObservation() {
             label="Status"
             className={classes.textField}
             margin="normal"
-            value={
-              StatusId[
-                observation ? observation.simStatus.status : simStatus.status
-              ]
-            }
+            value={observation ? observation.simStatus.code : simStatus.code}
             InputProps={{
               readOnly: true
             }}
@@ -125,7 +118,7 @@ export default function SimObservation() {
           </div>
         )}
       </form>
-      {simStatus.status === Status.IN_GAME && observation && "Observation"}
+      {simStatus.code === Codes.Running && observation && "Observation"}
     </Paper>
   );
 }

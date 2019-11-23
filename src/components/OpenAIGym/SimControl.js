@@ -11,8 +11,16 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Box from "@material-ui/core/Box";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
+import { Codes, Modes } from "./enums";
 import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 import SimStatusContext from "./SimStatusContext";
 import UserContext from "../../util/UserContext";
@@ -21,24 +29,23 @@ import UserContext from "../../util/UserContext";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    width: "100%",
-    display: "flex",
-    flexWrap: "wrap",
-    padding: theme.spacing(1),
-    color: theme.palette.text.secondary
+    padding: theme.spacing(1)
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    flexBasis: "33.33%",
-    flexShrink: 0
+  formControl: {
+    marginLeft: theme.spacing(1)
   },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 200
+    width: "97%"
+  },
+  buttons: {
+    display: "flex",
+    justifyContent: "flex-end"
   },
   button: {
-    margin: theme.spacing(1)
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1)
   },
   input: {
     display: "none"
@@ -53,10 +60,10 @@ export default function SimControl() {
   const [agentUri, setAgentUri] = useState(
     "https://lastknowngood.knowledge.maana.io:8443/service/b00a2def-69a1-4238-80f7-c7920aa0afd4/graphql"
   );
+  const [mode, setMode] = React.useState(Modes.Training);
 
   const { loading, error } = useQuery(ListEnvironmentsQuery, {
     onCompleted: data => {
-      console.log("listEnvironments", data);
       setEnvironment(data.listEnvironments[0].id);
       setEnvironments(data.listEnvironments);
     }
@@ -66,7 +73,9 @@ export default function SimControl() {
     variables: {
       config: {
         environment,
-        agentUri
+        mode,
+        agentUri,
+        token: UserContext.getAccessToken()
       }
     },
     onCompleted: data => setSimStatus(data.run)
@@ -81,10 +90,10 @@ export default function SimControl() {
   // --- Handlers
 
   const handleOnClickRun = async () => {
-    if (simStatus.Status === Status.IN_GAME) {
+    if (simStatus.code === Codes.Running) {
       stop();
     } else {
-      setSimStatus({ ...simStatus, status: Status.LAUNCHED });
+      setSimStatus({ ...simStatus, code: Codes.Starting });
       run();
     }
   };
@@ -93,58 +102,85 @@ export default function SimControl() {
 
   const disableControls =
     simStatus &&
-    (simStatus.status === Status.IN_GAME ||
-      simStatus.status === Status.LAUNCHED ||
-      simStatus.status === Status.INIT_GAME);
-
-  if (loading) return "Loading";
-  if (error) return "Error" + error;
+    (simStatus.code === Codes.Running || simStatus.code === Codes.Starting);
 
   return (
     <Paper className={classes.paper}>
       <Typography gutterBottom variant="h5">
         Configuration
       </Typography>
-      <Box>
-        <TextField
-          id="environment"
-          select
-          label="Environment"
-          disabled={disableControls}
-          className={classes.textField}
-          value={environment || ""}
-          onChange={e => setEnvironment(e.target.value)}
-          SelectProps={{
-            MenuProps: {
-              className: classes.menu
-            }
-          }}
-          margin="normal"
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={12}>
+          <TextField
+            id="environment"
+            select
+            label="Environment"
+            disabled={disableControls}
+            className={classes.textField}
+            value={environment || ""}
+            onChange={e => setEnvironment(e.target.value)}
+            SelectProps={{
+              MenuProps: {
+                className: classes.menu
+              }
+            }}
+            margin="normal"
+          >
+            {environments.map(env => (
+              <MenuItem key={env.id} value={env.id}>
+                {env.id}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <TextField
+            id="agentUri"
+            label="Agent URI"
+            disabled={disableControls}
+            className={classes.textField}
+            margin="normal"
+            value={agentUri}
+            onChange={e => setAgentUri(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <FormControl component="fieldset" className={classes.formControl}>
+            <FormLabel>Mode</FormLabel>
+            <RadioGroup
+              aria-label="mode"
+              name="mode"
+              value={mode}
+              onChange={e => setMode(e.target.value)}
+              row
+            >
+              <FormControlLabel
+                disabled={disableControls}
+                value={Modes.Training}
+                control={<Radio />}
+                label="Training"
+              />
+              <FormControlLabel
+                disabled={disableControls}
+                value={Modes.Performing}
+                control={<Radio />}
+                label="Performing"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+      </Grid>
+      <div className={classes.buttons}>
+        <Button
+          disabled={!!!simStatus}
+          onClick={handleOnClickRun}
+          variant="contained"
+          color={disableControls ? "secondary" : "primary"}
+          className={classes.button}
         >
-          {environments.map(env => (
-            <MenuItem key={env.id} value={env.id}>
-              {env.id}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          id="agentUri"
-          label="Agent URI"
-          disabled={disableControls}
-          className={classes.textField}
-          margin="normal"
-          value={agentUri}
-          onChange={e => setAgentUri(e.target.value)}
-        />
-      </Box>
-      <Button
-        disabled={!!!simStatus}
-        onClick={handleOnClickRun}
-        variant="outlined"
-        className={classes.button}
-      >
-        {disableControls ? "Stop" : "Run"}
-      </Button>
+          {disableControls ? "Stop" : "Run"}
+        </Button>
+      </div>
     </Paper>
   );
 }

@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 export const SimStatusFields = gql`
   fragment SimStatusFields on SimStatus {
     id
+    code
     errors
   }
 `;

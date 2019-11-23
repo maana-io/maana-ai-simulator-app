@@ -20,7 +20,7 @@ export default function Simulator() {
     pollInterval: 10000,
     onCompleted: data => {
       console.log("onCompleted: ", data);
-      setSimStatus(data.simStatus);
+      if (data) setSimStatus(data.simStatus);
     }
   });
 
