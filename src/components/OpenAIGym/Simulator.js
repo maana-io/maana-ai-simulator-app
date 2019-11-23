@@ -17,7 +17,7 @@ export default function Simulator() {
   const [simStatus, setSimStatus] = useState(null);
 
   const { loading, error } = useQuery(SimStatusQuery, {
-    pollInterval: 10000,
+    pollInterval: 1000,
     onCompleted: data => {
       console.log("onCompleted: ", data);
       setSimStatus(data.simStatus);

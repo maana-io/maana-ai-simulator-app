@@ -14,7 +14,7 @@ import Box from "@material-ui/core/Box";
 
 // --- Internal imports
 import { RunMutation, StopMutation } from "./graphql";
-import GameStatusContext from "./GameStatusContext";
+import SimStatusContext from "./SimStatusContext";
 
 // --- Styles
 
@@ -44,23 +44,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const GameControl = () => {
+export default function SimControl() {
   // --- Hooks
-  const { gameStatus, setGameStatus } = useContext(GameStatusContext);
+  const { simStatus, setSimStatus } = useContext(SimStatusContext);
 
   const [raceBot1, setRaceBot1] = useState(Race.RANDOM);
   const [raceBot2, setRaceBot2] = useState(Race.RANDOM);
-  const [uriBot1, setUriBot1] = useState();
-  const [uriBot2, setUriBot2] = useState();
+  const [uriBot1, setUriBot1] = useState("Computer");
+  const [uriBot2, setUriBot2] = useState("Computer");
 
   const [run] = useMutation(RunMutation, {
-    variables: { config: { id: gameStatus.id } },
-    onCompleted: data => setGameStatus(data.run)
+    variables: { config: { id: simStatus.id } },
+    onCompleted: data => setSimStatus(data.run)
   });
 
   const [stop] = useMutation(StopMutation, {
-    variables: { id: gameStatus.id },
-    onCompleted: data => setGameStatus(data.stop)
+    variables: { id: simStatus.id },
+    onCompleted: data => setSimStatus(data.stop)
   });
 
   const classes = useStyles();
@@ -68,10 +68,10 @@ const GameControl = () => {
   // --- Handlers
 
   const handleOnClickRun = async () => {
-    if (gameStatus.Status === Status.IN_GAME) {
+    if (simStatus.Status === Status.IN_GAME) {
       stop();
     } else {
-      setGameStatus({ ...gameStatus, status: Status.LAUNCHED });
+      setSimStatus({ ...simStatus, status: Status.LAUNCHED });
       run();
     }
   };
@@ -79,10 +79,10 @@ const GameControl = () => {
   // --- Rendering
 
   const disableControls =
-    gameStatus &&
-    (gameStatus.status === Status.IN_GAME ||
-      gameStatus.status === Status.LAUNCHED ||
-      gameStatus.status === Status.INIT_GAME);
+    simStatus &&
+    (simStatus.status === Status.IN_GAME ||
+      simStatus.status === Status.LAUNCHED ||
+      simStatus.status === Status.INIT_GAME);
 
   return (
     <Paper className={classes.paper}>
@@ -113,7 +113,6 @@ const GameControl = () => {
           id="uriBot1"
           label="URI"
           disabled={disableControls}
-          defaultValue="Computer"
           className={classes.textField}
           margin="normal"
           value={uriBot1}
@@ -147,7 +146,6 @@ const GameControl = () => {
           id="uriBot2"
           label="URI"
           disabled={disableControls}
-          defaultValue="Computer"
           className={classes.textField}
           margin="normal"
           value={uriBot2}
@@ -155,7 +153,7 @@ const GameControl = () => {
         />
       </Box>
       <Button
-        disabled={!!!gameStatus}
+        disabled={!!!simStatus}
         onClick={handleOnClickRun}
         variant="outlined"
         className={classes.button}
@@ -164,6 +162,4 @@ const GameControl = () => {
       </Button>
     </Paper>
   );
-};
-
-export default GameControl;
+}

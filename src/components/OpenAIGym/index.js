@@ -1,11 +1,17 @@
+// --- External imports
 import React from "react";
+
+// Material UI
 import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
+
+// --- Internal imports
+import Simulator from "./Simulator";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,6 +32,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function OpenAIGym() {
+  // --- Hooks
   const classes = useStyles();
 
   return (
@@ -41,7 +48,7 @@ export default function OpenAIGym() {
               />
               <CardContent>
                 <Typography gutterBottom variant="h5">
-                  OpenAI Gym - Coming Soon!
+                  OpenAI Gym
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
                   Gym is a toolkit for developing and comparing reinforcement
@@ -51,6 +58,9 @@ export default function OpenAIGym() {
               </CardContent>
             </CardActionArea>
           </Card>
+        </Grid>
+        <Grid item xs={9}>
+          <Simulator />
         </Grid>
       </Grid>
     </div>

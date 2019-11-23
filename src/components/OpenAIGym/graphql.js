@@ -2,9 +2,8 @@ import gql from "graphql-tag";
 
 export const SimStatusFields = gql`
   fragment SimStatusFields on SimStatus {
-    status
+    id
     errors
-    gameLoop
   }
 `;
 
@@ -15,6 +14,14 @@ export const SimStatusQuery = gql`
     }
   }
   ${SimStatusFields}
+`;
+
+export const ListEnvironmentsQuery = gql`
+  query listEnvironments {
+    listEnvironments {
+      id
+    }
+  }
 `;
 
 export const RunMutation = gql`

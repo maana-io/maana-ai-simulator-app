@@ -16,7 +16,7 @@ import Divider from "@material-ui/core/Divider";
 
 // --- Internal imports
 import { ObserveQuery } from "./graphql";
-import GameStatusContext from "./GameStatusContext";
+import SimStatusContext from "./SimStatusContext";
 
 // --- Constants
 
@@ -50,12 +50,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const GameObservation = () => {
+export default function SimObservation() {
   // --- Hooks
-  const { gameStatus } = useContext(GameStatusContext);
+  const { simStatus } = useContext(SimStatusContext);
 
   const { data } = useQuery(ObserveQuery, {
-    variables: { id: gameStatus.id },
+    variables: { id: simStatus.id },
     fetchPolicy: "no-cache",
     pollInterval: 1000
     // onCompleted: data => {
@@ -74,7 +74,7 @@ const GameObservation = () => {
   return (
     <Paper>
       <Typography gutterBottom variant="h5">
-        Game Observation
+        Observation
       </Typography>
       <form className={classes.container} noValidate autoComplete="off">
         <div>
@@ -85,7 +85,7 @@ const GameObservation = () => {
             margin="normal"
             value={
               StatusId[
-                observation ? observation.gameStatus.status : gameStatus.status
+                observation ? observation.simStatus.status : simStatus.status
               ]
             }
             InputProps={{
@@ -97,17 +97,17 @@ const GameObservation = () => {
             label="Game Loop"
             className={classes.textField}
             margin="normal"
-            value={observation ? observation.gameStatus.gameLoop : 0}
+            value={observation ? observation.simStatus.gameLoop : 0}
             InputProps={{
               readOnly: true
             }}
           />
         </div>
-        {gameStatus.errors.length > 0 && (
+        {simStatus.errors.length > 0 && (
           <div>
             <Typography variant="subtitle1">Errors</Typography>
             <List className={classes.listRoot}>
-              {gameStatus.errors.map((error, i) => {
+              {simStatus.errors.map((error, i) => {
                 const jsError = JSON.parse(error);
                 return (
                   <ListItem alignItems="flex-start" key={`error:${i}`}>
@@ -134,9 +134,7 @@ const GameObservation = () => {
           </div>
         )}
       </form>
-      {gameStatus.status === Status.IN_GAME && observation && "Observation"}
+      {simStatus.status === Status.IN_GAME && observation && "Observation"}
     </Paper>
   );
-};
-
-export default GameObservation;
+}
