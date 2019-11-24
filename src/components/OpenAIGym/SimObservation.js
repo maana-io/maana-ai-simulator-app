@@ -31,10 +31,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     width: "97%"
   },
-  listRoot: {},
-  input: {
-    display: "none"
-  }
+  listRoot: {}
 }));
 
 export default function SimObservation() {
@@ -50,6 +47,7 @@ export default function SimObservation() {
   let simStatus;
   if (data) {
     observation = data.observe;
+    console.log("observe", observation);
     simStatus = observation.simStatus;
   }
 
@@ -105,7 +103,7 @@ export default function SimObservation() {
               }}
             />
           </Grid>
-          {simStatus.errors.length > 0 && (
+          {simStatus.errors.length > 0 ? (
             <Grid item xs={12} sm={12}>
               <Typography variant="subtitle1">Errors</Typography>
               <List className={classes.listRoot}>
@@ -114,31 +112,27 @@ export default function SimObservation() {
                   return (
                     <ListItem alignItems="flex-start" key={`error:${i}`}>
                       <ListItemText
+                        primaryTypographyProps={{ color: "error" }}
                         primary={error}
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              component="span"
-                              variant="body2"
-                              className={classes.inline}
-                              color="textPrimary"
-                            >
-                              {error}
-                            </Typography>
-                          </React.Fragment>
-                        }
                       />
                     </ListItem>
                   );
                 })}
-                <Divider />
               </List>
             </Grid>
-          )}
-          {observation && (
-            <Grid item xs={12} sm={12}>
-              <Typography variant="subtitle1">Errors</Typography>
-            </Grid>
+          ) : (
+            observation && (
+              <Grid item xs={12} sm={12}>
+                <Typography variant="subtitle2" display="block" gutterBottom>
+                  State
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                >{`[${observation.data.join(", ")}]`}</Typography>
+              </Grid>
+            )
           )}
         </Grid>
       )}

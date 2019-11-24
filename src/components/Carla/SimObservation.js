@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 export default function SimObservation() {
   const { loading, error, data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
-    pollInterval: 1000
+    pollInterval: 10000
     // onCompleted: data => {
     //   console.log("onCompleted2", data);
     // }

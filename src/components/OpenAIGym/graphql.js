@@ -49,8 +49,6 @@ export const ObserveQuery = gql`
       episode
       step
       data
-      action
-      reward
       simStatus {
         ...SimStatusFields
       }

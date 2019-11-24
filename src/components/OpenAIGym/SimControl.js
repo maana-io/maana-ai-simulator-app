@@ -21,6 +21,15 @@ import { Codes, Modes } from "./enums";
 import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 import UserContext from "../../util/UserContext";
 
+// --- Constants
+const AiSimulatorUri =
+  "https://lastknowngood.knowledge.maana.io:8443/service/b00a2def-69a1-4238-80f7-c7920aa0afd4/graphql";
+
+const RandomAgentUri =
+  "https://lastknowngood.knowledge.maana.io:8443/service/01ffc8ee-bbc4-442b-a994-8565774c8167/graphql";
+
+const DefaultEnvironment = "Taxi-v3";
+
 // --- Styles
 
 const useStyles = makeStyles(theme => ({
@@ -51,11 +60,9 @@ const useStyles = makeStyles(theme => ({
 export default function SimControl({ simStatus }) {
   // --- Hooks
   const [simStatusState, setSimStatusState] = useState(simStatus);
-  const [environment, setEnvironment] = useState("Taxi-v3");
+  const [environment, setEnvironment] = useState(DefaultEnvironment);
   const [environments, setEnvironments] = useState([]);
-  const [agentUri, setAgentUri] = useState(
-    "https://lastknowngood.knowledge.maana.io:8443/service/b00a2def-69a1-4238-80f7-c7920aa0afd4/graphql"
-  );
+  const [agentUri, setAgentUri] = useState(RandomAgentUri);
   const [mode, setMode] = React.useState(Modes.Training);
 
   const { loading, error } = useQuery(ListEnvironmentsQuery, {
@@ -114,7 +121,7 @@ export default function SimControl({ simStatus }) {
             label="Environment"
             disabled={disableControls}
             className={classes.textField}
-            value={environment || ""}
+            value={environment}
             onChange={e => setEnvironment(e.target.value)}
             SelectProps={{
               MenuProps: {
