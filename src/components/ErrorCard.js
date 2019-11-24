@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ErrorCard({ error }) {
-  // console.log("ErrorCard", JSON.stringify(error, null, 2));
+  console.log("ErrorCard", JSON.stringify(error, null, 2));
   // console.log("- keys", Object.keys(error));
   const graphQLErrors = error["graphQLErrors"];
   const networkError = error["networkError"];

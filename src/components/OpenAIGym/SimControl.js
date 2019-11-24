@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 export default function SimControl({ simStatus }) {
   // --- Hooks
   const [simStatusState, setSimStatusState] = useState(simStatus);
-  const [environment, setEnvironment] = useState();
+  const [environment, setEnvironment] = useState("Taxi-v3");
   const [environments, setEnvironments] = useState([]);
   const [agentUri, setAgentUri] = useState(
     "https://lastknowngood.knowledge.maana.io:8443/service/b00a2def-69a1-4238-80f7-c7920aa0afd4/graphql"

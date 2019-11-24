@@ -110,11 +110,11 @@ export default function SimObservation() {
               <Typography variant="subtitle1">Errors</Typography>
               <List className={classes.listRoot}>
                 {simStatus.errors.map((error, i) => {
-                  const jsError = JSON.parse(error);
+                  // const jsError = JSON.parse(error);
                   return (
                     <ListItem alignItems="flex-start" key={`error:${i}`}>
                       <ListItemText
-                        primary={jsError.error.code}
+                        primary={error}
                         secondary={
                           <React.Fragment>
                             <Typography
@@ -123,7 +123,7 @@ export default function SimObservation() {
                               className={classes.inline}
                               color="textPrimary"
                             >
-                              {jsError.message}
+                              {error}
                             </Typography>
                           </React.Fragment>
                         }
