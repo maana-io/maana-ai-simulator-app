@@ -1,28 +1,50 @@
 // --- External imports
-import React from "react";
-import { useQuery } from "react-apollo";
+import React, { useState } from "react";
+import { useLocalStorage } from "react-recipes";
 
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
 
 // --- Internal imports
-import ErrorCard from "../ErrorCard";
+import UserContext from "../../util/UserContext";
+import createGraphQLClient from "../../util/createGraphQLClient";
+import SimulatorClientContext from "../SimulatorClientContext";
 import SimInfo from "../SimInfo";
-import SimControl from "./SimControl";
-import SimObservation from "./SimObservation";
-import { SimStatusQuery } from "./graphql";
+import SimBody from "./SimBody";
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     padding: theme.spacing(3, 2)
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: "97%"
   }
 }));
 
 export default function StarCraft2() {
-  const { loading, error, data } = useQuery(SimStatusQuery, {
-    pollInterval: 100000
+  // --- Hooks
+
+  const [starcraft2Uri, setStarcraft2Uri] = useLocalStorage(
+    "starcraft2-uri",
+    process.env.REACT_APP_SIMULATOR_STARCRAFT2_ENDPOINT
+  );
+
+  const [starcraft2Token, setStarcraft2Token] = useLocalStorage(
+    "starcraft2-token",
+    ""
+  );
+
+  const [client, setClient] = useState(() => {
+    const client = createGraphQLClient({
+      uri: starcraft2Uri,
+      token: starcraft2Token || UserContext.getAccessToken()
+    });
+    return client;
   });
 
   const classes = useStyles();
@@ -36,22 +58,34 @@ export default function StarCraft2() {
             title="StarCraft II"
             description="The StarCraft II Learning Environment (SC2LE) exposes Blizzard Entertainment's StarCraft II Machine Learning API to GraphQL agents. This is a collaboration between DeepMind and Blizzard to develop StarCraft II into a rich environment for RL research, providing an interface for RL agents to interact with StarCraft 2, getting observations and sending actions."
           />
+          <Grid item xs={12} sm={12}>
+            <TextField
+              id="starcraft2-uri"
+              label="Starcraft II URI"
+              className={classes.textField}
+              value={starcraft2Uri}
+              onChange={e => setStarcraft2Uri(e.target.value)}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              id="starcraft2-token"
+              label="Starcraft II Token"
+              className={classes.textField}
+              value={starcraft2Token}
+              onChange={e => setStarcraft2Token(e.target.value)}
+              margin="normal"
+            />
+          </Grid>
         </Grid>
         <Grid item xs={9} sm={9}>
-          <Grid container spacing={3}>
-            {loading && "Loading simulator...."}
-            {error && <ErrorCard error={error} />}
-            {data && (
-              <React.Fragment>
-                <Grid item xs={7} sm={7}>
-                  <SimControl simStatus={data.simStatus} />
-                </Grid>
-                <Grid item xs={5} sm={5}>
-                  <SimObservation simStatus={data.simStatus} />
-                </Grid>
-              </React.Fragment>
-            )}
-          </Grid>
+          {!!!client && "Please set a valid client"}
+          {!!client && (
+            <SimulatorClientContext.Provider value={client}>
+              <SimBody />
+            </SimulatorClientContext.Provider>
+          )}
         </Grid>
       </Grid>
     </div>

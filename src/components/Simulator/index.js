@@ -7,7 +7,6 @@ import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import SimInfo from "../SimInfo";
-import SimControl from "./SimControl";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,9 +28,7 @@ export default function Simulator() {
             description="This application hosts a variety of simulation environments that can be interfaced with any conforming GraphQL-based AI Agents"
           />
         </Grid>
-        <Grid item xs={9} sm={9}>
-          <SimControl />
-        </Grid>
+        <Grid item xs={9} sm={9}></Grid>
       </Grid>
     </div>
   );

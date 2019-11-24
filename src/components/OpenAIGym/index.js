@@ -1,6 +1,5 @@
 // --- External imports
 import React, { useState } from "react";
-import { useQuery } from "react-apollo";
 import { useLocalStorage } from "react-recipes";
 
 // Material UI
@@ -9,11 +8,11 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 
 // --- Internal imports
+import UserContext from "../../util/UserContext";
 import createGraphQLClient from "../../util/createGraphQLClient";
 import SimulatorClientContext from "../SimulatorClientContext";
 import SimInfo from "../SimInfo";
 import SimBody from "./SimBody";
-import UserContext from "../../util/UserContext";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,10 +27,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function OpenAIGym() {
+  // --- Hooks
+
   const [openAiGymUri, setOpenAiGymUri] = useLocalStorage(
     "openai-gym-uri",
     process.env.REACT_APP_SIMULATOR_OPENAI_GYM_ENDPOINT
   );
+
   const [openAiGymToken, setOpenAiGymToken] = useLocalStorage(
     "openai-gym-token",
     ""
@@ -40,7 +42,7 @@ export default function OpenAIGym() {
   const [client, setClient] = useState(() => {
     const client = createGraphQLClient({
       uri: openAiGymUri,
-      token: UserContext.getAccessToken()
+      token: openAiGymToken || UserContext.getAccessToken()
     });
     return client;
   });
