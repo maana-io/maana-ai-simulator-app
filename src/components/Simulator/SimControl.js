@@ -1,6 +1,7 @@
 // --- External imports
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
+import { useLocalStorage } from "react-recipes";
 
 // Material UI
 import Button from "@material-ui/core/Button";
@@ -18,11 +19,6 @@ import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import UserContext from "../../util/UserContext";
-
-// --- Constants
-const CARLA_ENDPOINT = process.env.REACT_APP_SIMULATOR_CARLA_ENDPOINT;
-const OPENAI_GYM_ENDPOINT = process.env.REACT_APP_SIMULATOR_OPENAI_GYM_ENDPOINT;
-const STARCRAFT2_ENDPOINT = process.env.REACT_APP_SIMULATOR_STARCRAFT2_ENDPOINT;
 
 // --- Styles
 
@@ -53,14 +49,26 @@ const useStyles = makeStyles(theme => ({
 
 export default function SimControl({ simStatus }) {
   // --- Hooks
-  const [carlaUri, setCarlaUri] = useState(
+  const [carlaUri, setCarlaUri] = useLocalStorage(
+    "carla-uri",
     process.env.REACT_APP_SIMULATOR_CARLA_ENDPOINT
   );
-  const [openAiUri, setOpenAiUri] = useState(
+  const [carlaToken, setCarlaToken] = useLocalStorage("carla-token", "");
+  const [openAiGymUri, setOpenAiGymUri] = useLocalStorage(
+    "openai-gym-uri",
     process.env.REACT_APP_SIMULATOR_OPENAI_GYM_ENDPOINT
   );
-  const [starcraft2Uri, setStarcraft2Uri] = useState(
+  const [openAiGymToken, setOpenAiGymToken] = useLocalStorage(
+    "openai-gym-token",
+    ""
+  );
+  const [starcraft2Uri, setStarcraft2Uri] = useLocalStorage(
+    "starcraft2-uri",
     process.env.REACT_APP_SIMULATOR_STARCRAFT2_ENDPOINT
+  );
+  const [starcraft2Token, setStarcraft2Token] = useLocalStorage(
+    "starcraft2-token",
+    ""
   );
 
   const classes = useStyles();
@@ -77,48 +85,63 @@ export default function SimControl({ simStatus }) {
         Control
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={12}>
+        <Grid item xs={6} sm={6}>
           <TextField
-            id="carla"
-            label="CARLA"
+            id="carla-uri"
+            label="CARLA URI"
             className={classes.textField}
             value={carlaUri}
             onChange={e => setCarlaUri(e.target.value)}
-            SelectProps={{
-              MenuProps: {
-                className: classes.menu
-              }
-            }}
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={12}>
+        <Grid item xs={6} sm={6}>
           <TextField
-            id="openai-gym"
-            label="OpenAI Gym"
+            id="carla-token"
+            label="CARLA Token"
             className={classes.textField}
-            value={openAiUri}
-            onChange={e => setOpenAiUri(e.target.value)}
-            SelectProps={{
-              MenuProps: {
-                className: classes.menu
-              }
-            }}
+            value={carlaToken}
+            onChange={e => setCarlaToken(e.target.value)}
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={12}>
+        <Grid item xs={6} sm={6}>
           <TextField
-            id="starcraft2"
-            label="Starcraft II"
+            id="openai-gym-uri"
+            label="OpenAI Gym URI"
+            className={classes.textField}
+            value={openAiGymUri}
+            onChange={e => setOpenAiGymUri(e.target.value)}
+            margin="normal"
+          />
+        </Grid>
+        <Grid item xs={6} sm={6}>
+          <TextField
+            id="openai-gym-token"
+            label="OpenAI Gym Token"
+            className={classes.textField}
+            value={openAiGymToken}
+            onChange={e => setOpenAiGymToken(e.target.value)}
+            margin="normal"
+          />
+        </Grid>
+        <Grid item xs={6} sm={6}>
+          <TextField
+            id="starcraft2-uri"
+            label="Starcraft II URI"
             className={classes.textField}
             value={starcraft2Uri}
             onChange={e => setStarcraft2Uri(e.target.value)}
-            SelectProps={{
-              MenuProps: {
-                className: classes.menu
-              }
-            }}
+            margin="normal"
+          />
+        </Grid>
+        <Grid item xs={6} sm={6}>
+          <TextField
+            id="starcraft2-token"
+            label="Starcraft II Token"
+            className={classes.textField}
+            value={starcraft2Token}
+            onChange={e => setStarcraft2Token(e.target.value)}
             margin="normal"
           />
         </Grid>
