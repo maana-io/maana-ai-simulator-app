@@ -1,28 +1,48 @@
 // --- External imports
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-apollo";
+import { useLocalStorage } from "react-recipes";
 
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
 
 // --- Internal imports
-import ErrorCard from "../ErrorCard";
+import createGraphQLClient from "../../util/createGraphQLClient";
+import SimulatorClientContext from "../SimulatorClientContext";
 import SimInfo from "../SimInfo";
-import SimControl from "./SimControl";
-import SimObservation from "./SimObservation";
-import { SimStatusQuery } from "./graphql";
+import SimBody from "./SimBody";
+import UserContext from "../../util/UserContext";
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     padding: theme.spacing(3, 2)
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: "97%"
   }
 }));
 
 export default function OpenAIGym() {
-  const { loading, error, data } = useQuery(SimStatusQuery, {
-    pollInterval: 1000
+  const [openAiGymUri, setOpenAiGymUri] = useLocalStorage(
+    "openai-gym-uri",
+    process.env.REACT_APP_SIMULATOR_OPENAI_GYM_ENDPOINT
+  );
+  const [openAiGymToken, setOpenAiGymToken] = useLocalStorage(
+    "openai-gym-token",
+    ""
+  );
+
+  const [client, setClient] = useState(() => {
+    const client = createGraphQLClient({
+      uri: openAiGymUri,
+      token: UserContext.getAccessToken()
+    });
+    return client;
   });
 
   const classes = useStyles();
@@ -36,22 +56,34 @@ export default function OpenAIGym() {
             title="OpenAI Gym"
             description="Gym is a toolkit for developing and comparing reinforcement learning algorithms. It supports teaching agents everything from walking to playing games like Pong or Pinball."
           />
+          <Grid item xs={12} sm={12}>
+            <TextField
+              id="openai-gym-uri"
+              label="OpenAI Gym URI"
+              className={classes.textField}
+              value={openAiGymUri}
+              onChange={e => setOpenAiGymUri(e.target.value)}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              id="openai-gym-token"
+              label="OpenAI Gym Token"
+              className={classes.textField}
+              value={openAiGymToken}
+              onChange={e => setOpenAiGymToken(e.target.value)}
+              margin="normal"
+            />
+          </Grid>
         </Grid>
         <Grid item xs={9} sm={9}>
-          <Grid container spacing={3}>
-            {loading && "Loading simulator...."}
-            {error && <ErrorCard error={error} />}
-            {data && (
-              <React.Fragment>
-                <Grid item xs={6} sm={6}>
-                  <SimControl simStatus={data.simStatus} />
-                </Grid>
-                <Grid item xs={6} sm={6}>
-                  <SimObservation simStatus={data.simStatus} />
-                </Grid>
-              </React.Fragment>
-            )}
-          </Grid>
+          {!!!client && "Please set a valid client"}
+          {!!client && (
+            <SimulatorClientContext.Provider value={client}>
+              <SimBody />
+            </SimulatorClientContext.Provider>
+          )}
         </Grid>
       </Grid>
     </div>

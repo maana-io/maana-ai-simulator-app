@@ -1,6 +1,7 @@
 // --- External imports
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
+import { useLocalStorage } from "react-recipes";
 
 // Material UI
 import Button from "@material-ui/core/Button";
@@ -17,6 +18,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
+import SimulatorClientContext from "../SimulatorClientContext";
 import { Codes, Modes } from "./enums";
 import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 import UserContext from "../../util/UserContext";
@@ -59,17 +61,26 @@ const useStyles = makeStyles(theme => ({
 
 export default function SimControl({ simStatus }) {
   // --- Hooks
+  const client = useContext(SimulatorClientContext);
+
   const [simStatusState, setSimStatusState] = useState(simStatus);
-  const [environment, setEnvironment] = useState(DefaultEnvironment);
+  const [environment, setEnvironment] = useLocalStorage(
+    "openai-gym-env",
+    DefaultEnvironment
+  );
   const [environments, setEnvironments] = useState([]);
-  const [agentUri, setAgentUri] = useState(RandomAgentUri);
+  const [agentUri, setAgentUri] = useLocalStorage(
+    "openai-gym-agent-uri",
+    RandomAgentUri
+  );
   const [mode, setMode] = React.useState(Modes.Training);
 
   const { loading, error } = useQuery(ListEnvironmentsQuery, {
     onCompleted: data => {
       setEnvironment(data.listEnvironments[0].id);
       setEnvironments(data.listEnvironments);
-    }
+    },
+    client
   });
 
   const [run] = useMutation(RunMutation, {
@@ -81,11 +92,13 @@ export default function SimControl({ simStatus }) {
         token: UserContext.getAccessToken()
       }
     },
-    onCompleted: data => setSimStatusState(data.run)
+    onCompleted: data => setSimStatusState(data.run),
+    client
   });
 
   const [stop] = useMutation(StopMutation, {
-    onCompleted: data => setSimStatusState(data.stop)
+    onCompleted: data => setSimStatusState(data.stop),
+    client
   });
 
   const classes = useStyles();

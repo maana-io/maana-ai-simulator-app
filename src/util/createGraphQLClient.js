@@ -12,6 +12,8 @@ import { getMainDefinition } from "apollo-utilities";
 // --- Internal imports
 
 const createGraphQLClient = ({ uri, wsUri, token }) => {
+  // console.log("createGraphQLClient", uri, wsUri, token);
+
   const authLink = setContext((_, { headers }) => {
     // return the headers to the context so httpLink can read them
     return {

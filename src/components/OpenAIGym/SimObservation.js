@@ -1,5 +1,5 @@
 // --- External imports
-import React from "react";
+import React, { useContext } from "react";
 import { useQuery } from "react-apollo";
 
 // Material UI
@@ -10,11 +10,11 @@ import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import ErrorCard from "../ErrorCard";
+import SimulatorClientContext from "../SimulatorClientContext";
 import { ObserveQuery } from "./graphql";
 import { Codes } from "./enums";
 
@@ -35,12 +35,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SimObservation() {
+  const client = useContext(SimulatorClientContext);
+
   const { loading, error, data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
-    pollInterval: 1000
+    pollInterval: 1000,
     // onCompleted: data => {
     //   console.log("onCompleted2", data);
     // }
+    client
   });
 
   let observation;
