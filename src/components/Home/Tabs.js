@@ -73,9 +73,9 @@ export default function SimpleTabs() {
             aria-label="simulator tabs"
           >
             <Tab label="Simulator" {...a11yProps(0)} />
-            <Tab label="StarCraft II" {...a11yProps(1)} />
-            <Tab label="CARLA" {...a11yProps(2)} />
-            <Tab label="OpenAI Gym" {...a11yProps(3)} />
+            <Tab label="CARLA" {...a11yProps(1)} />
+            <Tab label="OpenAI Gym" {...a11yProps(2)} />
+            <Tab label="StarCraft II" {...a11yProps(3)} />
           </Tabs>
         </Paper>
       </AppBar>
@@ -83,13 +83,13 @@ export default function SimpleTabs() {
         <Simulator />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <StarCraft2 />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
         <Carla />
       </TabPanel>
-      <TabPanel value={value} index={3}>
+      <TabPanel value={value} index={2}>
         <OpenAIGym />
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        <StarCraft2 />
       </TabPanel>
     </div>
   );
