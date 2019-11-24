@@ -122,16 +122,30 @@ export default function SimObservation() {
             </Grid>
           ) : (
             observation && (
-              <Grid item xs={12} sm={12}>
-                <Typography variant="subtitle2" display="block" gutterBottom>
-                  State
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  component="p"
-                >{`[${observation.data.join(", ")}]`}</Typography>
-              </Grid>
+              <React.Fragment>
+                <Grid item xs={12} sm={12}>
+                  <Typography variant="subtitle2" display="block" gutterBottom>
+                    State
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >{`[${observation.data.join(", ")}]`}</Typography>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <Typography variant="subtitle2" display="block" gutterBottom>
+                    Reward
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {observation.reward}
+                  </Typography>
+                </Grid>
+              </React.Fragment>
             )
           )}
         </Grid>
