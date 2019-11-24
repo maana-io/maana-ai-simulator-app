@@ -10,7 +10,7 @@ import TextField from "@material-ui/core/TextField";
 // --- Internal imports
 import UserContext from "../../util/UserContext";
 import createGraphQLClient from "../../util/createGraphQLClient";
-import SimulatorClientContext from "../SimulatorClientContext";
+import SimulatorClientContext from "../../util/SimulatorClientContext";
 import SimInfo from "../SimInfo";
 import SimBody from "./SimBody";
 

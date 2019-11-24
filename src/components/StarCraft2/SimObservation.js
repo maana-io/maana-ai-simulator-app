@@ -16,7 +16,6 @@ import Divider from "@material-ui/core/Divider";
 
 // --- Internal imports
 import { ObserveQuery } from "./graphql";
-import SimStatusContext from "./SimStatusContext";
 
 // --- Constants
 
@@ -50,14 +49,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SimObservation() {
+export default function SimObservation({ simStatus }) {
   // --- Hooks
-  const { simStatus } = useContext(SimStatusContext);
 
   const { data } = useQuery(ObserveQuery, {
-    variables: { id: simStatus.id },
     fetchPolicy: "no-cache",
-    pollInterval: 100000
+    pollInterval: 1000
     // onCompleted: data => {
     //   console.log("onCompleted2", data);
     // }
@@ -83,11 +80,7 @@ export default function SimObservation() {
             label="Status"
             className={classes.textField}
             margin="normal"
-            value={
-              StatusId[
-                observation ? observation.simStatus.status : simStatus.status
-              ]
-            }
+            value={observation ? observation.simStatus.code : simStatus.code}
             InputProps={{
               readOnly: true
             }}

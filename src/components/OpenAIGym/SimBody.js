@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import ErrorCard from "../ErrorCard";
-import SimulatorClientContext from "../SimulatorClientContext";
+import SimulatorClientContext from "../../util/SimulatorClientContext";
 import SimControl from "./SimControl";
 import SimObservation from "./SimObservation";
 import { SimStatusQuery } from "./graphql";

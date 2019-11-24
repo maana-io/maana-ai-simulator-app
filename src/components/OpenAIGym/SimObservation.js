@@ -14,9 +14,9 @@ import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import ErrorCard from "../ErrorCard";
-import SimulatorClientContext from "../SimulatorClientContext";
+import SimulatorClientContext from "../../util/SimulatorClientContext";
 import { ObserveQuery } from "./graphql";
-import { Codes } from "./enums";
+import { Codes } from "../../util/enums";
 
 // --- Constants
 
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   listRoot: {}
 }));
 
-export default function SimObservation() {
+export default function SimObservation({ simStatus }) {
   const client = useContext(SimulatorClientContext);
 
   const { loading, error, data } = useQuery(ObserveQuery, {
@@ -47,11 +47,11 @@ export default function SimObservation() {
   });
 
   let observation;
-  let simStatus;
+  let simStatusState = simStatus;
   if (data) {
     observation = data.observe;
     console.log("observe", observation);
-    simStatus = observation.simStatus;
+    simStatusState = observation.simStatus;
   }
 
   // console.log("observation", observation);
@@ -106,11 +106,11 @@ export default function SimObservation() {
               }}
             />
           </Grid>
-          {simStatus.errors.length > 0 ? (
+          {simStatusState.errors.length > 0 ? (
             <Grid item xs={12} sm={12}>
               <Typography variant="subtitle1">Errors</Typography>
               <List className={classes.listRoot}>
-                {simStatus.errors.map((error, i) => {
+                {simStatusState.errors.map((error, i) => {
                   // const jsError = JSON.parse(error);
                   return (
                     <ListItem alignItems="flex-start" key={`error:${i}`}>

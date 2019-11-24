@@ -18,8 +18,8 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
-import SimulatorClientContext from "../SimulatorClientContext";
-import { Codes, Modes } from "./enums";
+import SimulatorClientContext from "../../util/SimulatorClientContext";
+import { Codes, Modes } from "../../util/enums";
 import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 import UserContext from "../../util/UserContext";
 
@@ -64,15 +64,19 @@ export default function SimControl({ simStatus }) {
   const client = useContext(SimulatorClientContext);
 
   const [simStatusState, setSimStatusState] = useState(simStatus);
+
   const [environment, setEnvironment] = useLocalStorage(
     "openai-gym-env",
     DefaultEnvironment
   );
+
   const [environments, setEnvironments] = useState([]);
+
   const [agentUri, setAgentUri] = useLocalStorage(
     "openai-gym-agent-uri",
     RandomAgentUri
   );
+
   const [mode, setMode] = React.useState(Modes.Training);
 
   const { loading, error } = useQuery(ListEnvironmentsQuery, {

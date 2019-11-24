@@ -2,9 +2,9 @@ import gql from "graphql-tag";
 
 export const SimStatusFields = gql`
   fragment SimStatusFields on SimStatus {
-    status
+    id
+    code
     errors
-    gameLoop
   }
 `;
 

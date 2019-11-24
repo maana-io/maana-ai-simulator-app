@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
 // --- Internal imports
-import { Codes, Modes } from "./enums";
+import { Codes, Modes } from "../../util/enums";
 import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 import UserContext from "../../util/UserContext";
 
