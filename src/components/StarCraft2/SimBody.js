@@ -11,7 +11,7 @@ import ErrorCard from "../ErrorCard";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
 import SimControl from "./SimControl";
 import SimObservation from "./SimObservation";
-import { SimStatusQuery } from "./graphql";
+import { StatusQuery } from "./graphql";
 
 const useStyles = makeStyles(theme => ({
   root: {}
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 export default function SimBody() {
   const client = useContext(SimulatorClientContext);
 
-  const { loading, error, data } = useQuery(SimStatusQuery, {
+  const { loading, error, data } = useQuery(StatusQuery, {
     pollInterval: 1000,
     client
   });
@@ -34,10 +34,10 @@ export default function SimBody() {
       {data && (
         <React.Fragment>
           <Grid item xs={6} sm={6}>
-            <SimControl simStatus={data.simStatus} />
+            <SimControl status={data.status} />
           </Grid>
           <Grid item xs={6} sm={6}>
-            <SimObservation simStatus={data.simStatus} />
+            <SimObservation status={data.status} />
           </Grid>
         </React.Fragment>
       )}

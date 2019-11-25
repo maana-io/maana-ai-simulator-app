@@ -59,20 +59,20 @@ export default function Carla() {
             <TextField
               id="carla-uri"
               label="CARLA URI"
+              margin="dense"
               className={classes.textField}
               value={carlaUri}
               onChange={e => setCarlaUri(e.target.value)}
-              margin="normal"
             />
           </Grid>
           <Grid item xs={12} sm={12}>
             <TextField
               id="carla-token"
               label="CARLA Token"
+              margin="dense"
               className={classes.textField}
               value={carlaToken}
               onChange={e => setCarlaToken(e.target.value)}
-              margin="normal"
             />
           </Grid>
         </Grid>

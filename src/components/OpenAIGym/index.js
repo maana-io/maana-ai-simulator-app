@@ -62,20 +62,20 @@ export default function OpenAIGym() {
             <TextField
               id="openai-gym-uri"
               label="OpenAI Gym URI"
+              margin="dense"
               className={classes.textField}
               value={openAiGymUri}
               onChange={e => setOpenAiGymUri(e.target.value)}
-              margin="normal"
             />
           </Grid>
           <Grid item xs={12} sm={12}>
             <TextField
               id="openai-gym-token"
               label="OpenAI Gym Token"
+              margin="dense"
               className={classes.textField}
               value={openAiGymToken}
               onChange={e => setOpenAiGymToken(e.target.value)}
-              margin="normal"
             />
           </Grid>
         </Grid>

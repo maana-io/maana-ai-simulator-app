@@ -62,20 +62,20 @@ export default function StarCraft2() {
             <TextField
               id="starcraft2-uri"
               label="Starcraft II URI"
+              margin="dense"
               className={classes.textField}
               value={starcraft2Uri}
               onChange={e => setStarcraft2Uri(e.target.value)}
-              margin="normal"
             />
           </Grid>
           <Grid item xs={12} sm={12}>
             <TextField
               id="starcraft2-token"
               label="Starcraft II Token"
+              margin="dense"
               className={classes.textField}
               value={starcraft2Token}
               onChange={e => setStarcraft2Token(e.target.value)}
-              margin="normal"
             />
           </Grid>
         </Grid>

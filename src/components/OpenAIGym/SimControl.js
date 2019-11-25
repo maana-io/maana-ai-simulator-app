@@ -134,6 +134,7 @@ export default function SimControl({ simStatus }) {
               id="environment"
               select
               label="Environment"
+              margin="dense"
               disabled={disableControls}
               className={classes.textField}
               value={environment}
@@ -143,7 +144,6 @@ export default function SimControl({ simStatus }) {
                   className: classes.menu
                 }
               }}
-              margin="normal"
             >
               {environments.map(env => (
                 <MenuItem key={env.id} value={env.id}>
@@ -157,9 +157,9 @@ export default function SimControl({ simStatus }) {
           <TextField
             id="agentUri"
             label="Agent URI"
+            margin="dense"
             disabled={disableControls}
             className={classes.textField}
-            margin="normal"
             value={agentUri}
             onChange={e => setAgentUri(e.target.value)}
           />

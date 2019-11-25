@@ -67,90 +67,85 @@ export default function SimObservation({ simStatus }) {
       </Typography>
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
-      {data && (
+      {observation && (
         <Grid container spacing={3}>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={3} sm={3}>
             <TextField
               id="status"
               label="Status"
+              margin="dense"
               disabled={!!!observation}
               className={classes.textField}
-              margin="normal"
               value={observation ? observation.simStatus.code : Codes.Unknown}
               InputProps={{
                 readOnly: true
               }}
             />
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={3} sm={3}>
             <TextField
               id="episode"
               label="Episode"
+              margin="dense"
               className={classes.textField}
-              margin="normal"
               value={observation ? observation.episode : 0}
               InputProps={{
                 readOnly: true
               }}
             />
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={3} sm={3}>
             <TextField
               id="step"
               label="Step"
+              margin="dense"
               className={classes.textField}
-              margin="normal"
               value={observation ? observation.step : 0}
               InputProps={{
                 readOnly: true
               }}
             />
           </Grid>
-          {simStatusState.errors.length > 0 ? (
-            <Grid item xs={12} sm={12}>
-              <Typography variant="subtitle1">Errors</Typography>
-              <List className={classes.listRoot}>
-                {simStatusState.errors.map((error, i) => {
-                  // const jsError = JSON.parse(error);
-                  return (
-                    <ListItem alignItems="flex-start" key={`error:${i}`}>
-                      <ListItemText
-                        primaryTypographyProps={{ color: "error" }}
-                        primary={error}
-                      />
-                    </ListItem>
-                  );
-                })}
-              </List>
-            </Grid>
-          ) : (
-            observation && (
-              <React.Fragment>
-                <Grid item xs={12} sm={12}>
-                  <Typography variant="subtitle2" display="block" gutterBottom>
-                    State
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >{`[${observation.data.join(", ")}]`}</Typography>
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                  <Typography variant="subtitle2" display="block" gutterBottom>
-                    Reward
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {observation.reward}
-                  </Typography>
-                </Grid>
-              </React.Fragment>
-            )
-          )}
+          <Grid item xs={3} sm={3}>
+            <TextField
+              id="reward"
+              label="Reward"
+              margin="dense"
+              className={classes.textField}
+              value={observation ? observation.reward : 0}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Typography variant="subtitle2" display="block" gutterBottom>
+              State
+            </Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+            >{`[${observation.data.join(", ")}]`}</Typography>
+          </Grid>
+        </Grid>
+      )}
+      {simStatusState.errors.length > 0 && (
+        <Grid item xs={12} sm={12}>
+          <Typography variant="subtitle1">Errors</Typography>
+          <List className={classes.listRoot}>
+            {simStatusState.errors.map((error, i) => {
+              // const jsError = JSON.parse(error);
+              return (
+                <ListItem alignItems="flex-start" key={`error:${i}`}>
+                  <ListItemText
+                    primaryTypographyProps={{ color: "error" }}
+                    primary={error}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
         </Grid>
       )}
     </Paper>

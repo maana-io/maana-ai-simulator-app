@@ -20,8 +20,7 @@ import Grid from "@material-ui/core/Grid";
 import { Modes, Codes } from "../../util/enums";
 import { Race } from "./enums";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
-import { ListMapsQuery, RunMutation, StopMutation } from "./graphql";
-import { CodeGenerator } from "@babel/generator";
+import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 
 // --- Constants
 
@@ -54,19 +53,19 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SimControl({ simStatus }) {
+export default function SimControl({ status }) {
   // --- Hooks
   const client = useContext(SimulatorClientContext);
 
-  const [simStatusState, setSimStatusState] = useState(simStatus);
+  const [statusState, setStatusState] = useState(status);
 
   const [map, setMap] = useLocalStorage("starcraft2-map", DefaultMap);
 
   const [maps, setMaps] = useState([]);
 
-  const { loading, error } = useQuery(ListMapsQuery, {
+  const { loading, error } = useQuery(ListEnvironmentsQuery, {
     onCompleted: data => {
-      setMaps(data.listMaps);
+      setMaps(data.listEnvironments);
     },
     client
   });
@@ -100,18 +99,20 @@ export default function SimControl({ simStatus }) {
   const [run] = useMutation(RunMutation, {
     variables: {
       config: {
+        map,
+        mode,
         players: [
           { race: raceBot1, uri: uriBot1, token: tokenBot1 },
           { race: raceBot2, uri: uriBot2, token: tokenBot2 }
         ]
       }
     },
-    onCompleted: data => setSimStatusState(data.run),
+    onCompleted: data => setStatusState(data.run),
     client
   });
 
   const [stop] = useMutation(StopMutation, {
-    onCompleted: data => setSimStatusState(data.run),
+    onCompleted: data => setStatusState(data.run),
     client
   });
 
@@ -120,10 +121,10 @@ export default function SimControl({ simStatus }) {
   // --- Handlers
 
   const handleOnClickRun = async () => {
-    if (simStatusState.code === Codes.Running) {
+    if (statusState.code === Codes.Running) {
       stop();
     } else {
-      setSimStatusState({ ...simStatus, code: Codes.Running });
+      setStatusState({ ...status, code: Codes.Running });
       run();
     }
   };
@@ -297,7 +298,7 @@ export default function SimControl({ simStatus }) {
       </Grid>
       <div className={classes.buttons}>
         <Button
-          disabled={!!!simStatusState}
+          disabled={!!!statusState}
           onClick={handleOnClickRun}
           variant="contained"
           color={disableControls ? "secondary" : "primary"}

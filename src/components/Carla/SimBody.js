@@ -21,7 +21,7 @@ export default function SimBody() {
   const client = useContext(SimulatorClientContext);
 
   const { loading, error, data } = useQuery(SimStatusQuery, {
-    pollInterval: 100000,
+    // pollInterval: 100000,
     client
   });
 

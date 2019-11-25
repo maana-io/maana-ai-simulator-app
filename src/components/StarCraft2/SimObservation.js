@@ -2,8 +2,6 @@
 import React, { useContext } from "react";
 import { useQuery } from "react-apollo";
 
-import { Status } from "@node-sc2/core/constants/enums";
-
 // Material UI
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
@@ -12,9 +10,10 @@ import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
+import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
+import ErrorCard from "../ErrorCard";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
 import { ObserveQuery } from "./graphql";
 
@@ -34,11 +33,11 @@ const useStyles = makeStyles(theme => ({
   listRoot: {}
 }));
 
-export default function SimObservation({ simStatus }) {
+export default function SimObservation({ status }) {
   // --- Hooks
   const client = useContext(SimulatorClientContext);
 
-  const { data } = useQuery(ObserveQuery, {
+  const { loading, error, data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
     pollInterval: 1000,
     // onCompleted: data => {
@@ -47,76 +46,83 @@ export default function SimObservation({ simStatus }) {
     client
   });
 
+  console.log("status", status);
+
   let observation = null;
+  let statusState = status;
   if (data) {
     observation = data.observe;
+    statusState = observation.status;
   }
 
   const classes = useStyles();
 
-  console.log("simStatus", simStatus);
-
   // --- Rendering
   return (
-    <Paper>
+    <Paper className={classes.paper}>
       <Typography gutterBottom variant="h5">
         Observation
       </Typography>
-      <form className={classes.container} noValidate autoComplete="off">
-        <div>
-          <TextField
-            id="status"
-            label="Status"
-            className={classes.textField}
-            margin="normal"
-            value={observation ? observation.simStatus.code : simStatus.code}
-            InputProps={{
-              readOnly: true
-            }}
-          />
-          <TextField
-            id="gameLoop"
-            label="Game Loop"
-            className={classes.textField}
-            margin="normal"
-            value={observation ? observation.simStatus.gameLoop : 0}
-            InputProps={{
-              readOnly: true
-            }}
-          />
-        </div>
-        {simStatus.errors.length > 0 && (
-          <div>
-            <Typography variant="subtitle1">Errors</Typography>
-            <List className={classes.listRoot}>
-              {simStatus.errors.map((error, i) => {
-                const jsError = JSON.parse(error);
-                return (
-                  <ListItem alignItems="flex-start" key={`error:${i}`}>
-                    <ListItemText
-                      primary={jsError.error.code}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                            component="span"
-                            variant="body2"
-                            className={classes.inline}
-                            color="textPrimary"
-                          >
-                            {jsError.message}
-                          </Typography>
-                        </React.Fragment>
-                      }
-                    />
-                  </ListItem>
-                );
-              })}
-              <Divider />
-            </List>
-          </div>
-        )}
-      </form>
-      {simStatus.status === Status.IN_GAME && observation && "Observation"}
+      {loading && "Loading simulator...."}
+      {error && <ErrorCard error={error} />}
+      {observation && (
+        <Grid container spacing={3}>
+          <Grid item xs={3} sm={3}>
+            <TextField
+              id="status"
+              label="Status"
+              margin="dense"
+              disabled={!!!observation}
+              className={classes.textField}
+              value={observation ? observation.status.code.id : status.code.id}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={3} sm={3}>
+            <TextField
+              id="steps"
+              label="Steps"
+              margin="dense"
+              disabled={!!!observation}
+              className={classes.textField}
+              value={observation ? observation.steps : 0}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Typography variant="subtitle2" display="block" gutterBottom>
+              State
+            </Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+            >{`[${observation.data.join(", ")}]`}</Typography>
+          </Grid>
+        </Grid>
+      )}
+      {statusState.errors.length > 0 && (
+        <Grid item xs={12} sm={12}>
+          <Typography variant="subtitle1">Errors</Typography>
+          <List className={classes.listRoot}>
+            {statusState.errors.map((error, i) => {
+              // const jsError = JSON.parse(error);
+              return (
+                <ListItem alignItems="flex-start" key={`error:${i}`}>
+                  <ListItemText
+                    primaryTypographyProps={{ color: "error" }}
+                    primary={error}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
+        </Grid>
+      )}
     </Paper>
   );
 }
