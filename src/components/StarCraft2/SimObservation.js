@@ -54,6 +54,8 @@ export default function SimObservation({ simStatus }) {
 
   const classes = useStyles();
 
+  console.log("simStatus", simStatus);
+
   // --- Rendering
   return (
     <Paper>

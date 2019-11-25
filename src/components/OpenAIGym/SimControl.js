@@ -129,27 +129,29 @@ export default function SimControl({ simStatus }) {
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12}>
-          <TextField
-            id="environment"
-            select
-            label="Environment"
-            disabled={disableControls}
-            className={classes.textField}
-            value={environment}
-            onChange={e => setEnvironment(e.target.value)}
-            SelectProps={{
-              MenuProps: {
-                className: classes.menu
-              }
-            }}
-            margin="normal"
-          >
-            {environments.map(env => (
-              <MenuItem key={env.id} value={env.id}>
-                {env.id}
-              </MenuItem>
-            ))}
-          </TextField>
+          {environments && environments.length > 0 && (
+            <TextField
+              id="environment"
+              select
+              label="Environment"
+              disabled={disableControls}
+              className={classes.textField}
+              value={environment}
+              onChange={e => setEnvironment(e.target.value)}
+              SelectProps={{
+                MenuProps: {
+                  className: classes.menu
+                }
+              }}
+              margin="normal"
+            >
+              {environments.map(env => (
+                <MenuItem key={env.id} value={env.id}>
+                  {env.id}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
         </Grid>
         <Grid item xs={12} sm={12}>
           <TextField

@@ -2,7 +2,6 @@
 import React, { useContext, useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
 import { useLocalStorage } from "react-recipes";
-import { Race, RaceId, Status } from "@node-sc2/core/constants/enums";
 
 // Material UI
 import Button from "@material-ui/core/Button";
@@ -18,9 +17,11 @@ import FormControl from "@material-ui/core/FormControl";
 import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
-import { Modes } from "../../util/enums";
+import { Modes, Codes } from "../../util/enums";
+import { Race } from "./enums";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
 import { ListMapsQuery, RunMutation, StopMutation } from "./graphql";
+import { CodeGenerator } from "@babel/generator";
 
 // --- Constants
 
@@ -72,12 +73,12 @@ export default function SimControl({ simStatus }) {
 
   const [raceBot1, setRaceBot1] = useLocalStorage(
     "starcraft2-race-bot1",
-    Race.RANDOM
+    Race.Random
   );
 
   const [raceBot2, setRaceBot2] = useLocalStorage(
     "starcraft2-race-bot2",
-    Race.RANDOM
+    Race.Random
   );
 
   const [uriBot1, setUriBot1] = useLocalStorage(
@@ -119,10 +120,10 @@ export default function SimControl({ simStatus }) {
   // --- Handlers
 
   const handleOnClickRun = async () => {
-    if (simStatus.Status === Status.IN_GAME) {
+    if (simStatusState.code === Codes.Running) {
       stop();
     } else {
-      setSimStatusState({ ...simStatus, status: Status.LAUNCHED });
+      setSimStatusState({ ...simStatus, code: Codes.Running });
       run();
     }
   };
@@ -134,8 +135,6 @@ export default function SimControl({ simStatus }) {
   // (simStatus.status === Status.IN_GAME ||
   //   simStatus.status === Status.LAUNCHED ||
   //   simStatus.status === Status.INIT_GAME);
-
-  console.log("maps", maps);
 
   return (
     <Paper className={classes.paper}>
@@ -187,9 +186,9 @@ export default function SimControl({ simStatus }) {
                   }
                 }}
               >
-                {Object.keys(RaceId).map(raceId => (
-                  <MenuItem key={`raceId:${raceId}`} value={raceId}>
-                    {RaceId[raceId]}
+                {Object.keys(Race).map(race => (
+                  <MenuItem key={`race:${race}`} value={Race[race]}>
+                    {race}
                   </MenuItem>
                 ))}
               </TextField>
@@ -237,9 +236,9 @@ export default function SimControl({ simStatus }) {
                   }
                 }}
               >
-                {Object.keys(RaceId).map(raceId => (
-                  <MenuItem key={`raceId:${raceId}`} value={raceId}>
-                    {RaceId[raceId]}
+                {Object.keys(Race).map(race => (
+                  <MenuItem key={`race:${race}`} value={Race[race]}>
+                    {race}
                   </MenuItem>
                 ))}
               </TextField>
