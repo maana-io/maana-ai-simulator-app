@@ -39,7 +39,7 @@ export default function StarCraft2() {
     ""
   );
 
-  const [client, setClient] = useState(() => {
+  const [client] = useState(() => {
     const client = createGraphQLClient({
       uri: starcraft2Uri,
       token: starcraft2Token || UserContext.getAccessToken()

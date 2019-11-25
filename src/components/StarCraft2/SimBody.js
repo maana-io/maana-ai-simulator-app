@@ -14,10 +14,7 @@ import SimObservation from "./SimObservation";
 import { SimStatusQuery } from "./graphql";
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(3, 2)
-  }
+  root: {}
 }));
 
 export default function SimBody() {
@@ -31,7 +28,7 @@ export default function SimBody() {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={3}>
+    <Grid className={classes.root} container spacing={3}>
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
       {data && (

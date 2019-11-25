@@ -39,7 +39,7 @@ export default function OpenAIGym() {
     ""
   );
 
-  const [client, setClient] = useState(() => {
+  const [client] = useState(() => {
     const client = createGraphQLClient({
       uri: openAiGymUri,
       token: openAiGymToken || UserContext.getAccessToken()

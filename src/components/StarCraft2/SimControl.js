@@ -1,6 +1,6 @@
 // --- External imports
 import React, { useContext, useState } from "react";
-import { useMutation } from "react-apollo";
+import { useMutation, useQuery } from "react-apollo";
 import { useLocalStorage } from "react-recipes";
 import { Race, RaceId, Status } from "@node-sc2/core/constants/enums";
 
@@ -11,11 +11,20 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import Box from "@material-ui/core/Box";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
+import { Modes } from "../../util/enums";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
-import { RunMutation, StopMutation } from "./graphql";
+import { ListMapsQuery, RunMutation, StopMutation } from "./graphql";
+
+// --- Constants
+
+const DefaultMap = "DefeatRoaches";
 
 // --- Styles
 
@@ -50,24 +59,42 @@ export default function SimControl({ simStatus }) {
 
   const [simStatusState, setSimStatusState] = useState(simStatus);
 
+  const [map, setMap] = useLocalStorage("starcraft2-map", DefaultMap);
+
+  const [maps, setMaps] = useState([]);
+
+  const { loading, error } = useQuery(ListMapsQuery, {
+    onCompleted: data => {
+      setMaps(data.listMaps);
+    },
+    client
+  });
+
   const [raceBot1, setRaceBot1] = useLocalStorage(
     "starcraft2-race-bot1",
     Race.RANDOM
   );
+
   const [raceBot2, setRaceBot2] = useLocalStorage(
     "starcraft2-race-bot2",
     Race.RANDOM
   );
+
   const [uriBot1, setUriBot1] = useLocalStorage(
     "starcraft2-uri-bot1",
     "Computer"
   );
+
   const [uriBot2, setUriBot2] = useLocalStorage(
     "starcraft2-uri-bot2",
     "Computer"
   );
+
   const [tokenBot1, setTokenBot1] = useLocalStorage("starcraft2-token-bot1");
+
   const [tokenBot2, setTokenBot2] = useLocalStorage("starcraft2-token-bot2");
+
+  const [mode, setMode] = React.useState(Modes.Training);
 
   const [run] = useMutation(RunMutation, {
     variables: {
@@ -102,88 +129,184 @@ export default function SimControl({ simStatus }) {
 
   // --- Rendering
 
-  const disableControls =
-    simStatus &&
-    (simStatus.status === Status.IN_GAME ||
-      simStatus.status === Status.LAUNCHED ||
-      simStatus.status === Status.INIT_GAME);
+  const disableControls = false;
+  // simStatus &&
+  // (simStatus.status === Status.IN_GAME ||
+  //   simStatus.status === Status.LAUNCHED ||
+  //   simStatus.status === Status.INIT_GAME);
+
+  console.log("maps", maps);
 
   return (
     <Paper className={classes.paper}>
-      <Typography className={classes.heading}>Player One</Typography>
-      <Box>
-        <TextField
-          id="raceBot1"
-          select
-          label="Race"
-          disabled={disableControls}
-          className={classes.textField}
-          value={raceBot1}
-          onChange={e => setRaceBot1(e.target.value)}
-          SelectProps={{
-            MenuProps: {
-              className: classes.menu
-            }
-          }}
-          margin="normal"
+      <Typography gutterBottom variant="h5">
+        Control
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={12}>
+          {maps && maps.length !== 0 && (
+            <TextField
+              id="map"
+              select
+              label="Map"
+              margin="dense"
+              disabled={disableControls}
+              className={classes.textField}
+              value={map}
+              onChange={e => setMap(e.target.value)}
+              SelectProps={{
+                MenuProps: {
+                  className: classes.menu
+                }
+              }}
+            >
+              {maps.map(m => (
+                <MenuItem key={m.id} value={m.id}>
+                  {m.id}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <Typography className={classes.heading}>Player One</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                id="raceBot1"
+                select
+                label="Race"
+                margin="dense"
+                disabled={disableControls}
+                className={classes.textField}
+                value={raceBot1}
+                onChange={e => setRaceBot1(e.target.value)}
+                SelectProps={{
+                  MenuProps: {
+                    className: classes.menu
+                  }
+                }}
+              >
+                {Object.keys(RaceId).map(raceId => (
+                  <MenuItem key={`raceId:${raceId}`} value={raceId}>
+                    {RaceId[raceId]}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                id="uriBot1"
+                label="URI"
+                margin="dense"
+                disabled={disableControls}
+                className={classes.textField}
+                value={uriBot1}
+                onChange={e => setUriBot1(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                id="tokenBot1"
+                label="Token"
+                margin="dense"
+                disabled={disableControls}
+                className={classes.textField}
+                value={tokenBot1}
+                onChange={e => setTokenBot1(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <Typography className={classes.heading}>Player Two</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                id="raceBot2"
+                select
+                label="Race"
+                margin="dense"
+                disabled={disableControls}
+                className={classes.textField}
+                value={raceBot2}
+                onChange={e => setRaceBot2(e.target.value)}
+                SelectProps={{
+                  MenuProps: {
+                    className: classes.menu
+                  }
+                }}
+              >
+                {Object.keys(RaceId).map(raceId => (
+                  <MenuItem key={`raceId:${raceId}`} value={raceId}>
+                    {RaceId[raceId]}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                id="uriBot2"
+                label="URI"
+                margin="dense"
+                disabled={disableControls}
+                className={classes.textField}
+                value={uriBot2}
+                onChange={e => setUriBot2(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                id="tokenBot2"
+                label="Token"
+                margin="dense"
+                disabled={disableControls}
+                className={classes.textField}
+                value={tokenBot2}
+                onChange={e => setTokenBot2(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <Typography className={classes.heading}>Mode</Typography>
+          <Grid container spacing={1}>
+            <FormControl component="fieldset" className={classes.formControl}>
+              <RadioGroup
+                aria-label="mode"
+                name="mode"
+                value={mode}
+                onChange={e => setMode(e.target.value)}
+                row
+              >
+                <FormControlLabel
+                  disabled={disableControls}
+                  value={Modes.Training}
+                  control={<Radio />}
+                  label="Training"
+                />
+                <FormControlLabel
+                  disabled={disableControls}
+                  value={Modes.Performing}
+                  control={<Radio />}
+                  label="Performing"
+                />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </Grid>
+      <div className={classes.buttons}>
+        <Button
+          disabled={!!!simStatusState}
+          onClick={handleOnClickRun}
+          variant="contained"
+          color={disableControls ? "secondary" : "primary"}
+          className={classes.button}
         >
-          {Object.keys(RaceId).map(raceId => (
-            <MenuItem key={`raceId:${raceId}`} value={raceId}>
-              {RaceId[raceId]}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          id="uriBot1"
-          label="URI"
-          disabled={disableControls}
-          className={classes.textField}
-          margin="normal"
-          value={uriBot1}
-          onChange={e => setUriBot1(e.target.value)}
-        />
-      </Box>
-      <Typography className={classes.heading}>Player Two</Typography>
-      <Box>
-        <TextField
-          id="raceBot2"
-          select
-          label="Race"
-          disabled={disableControls}
-          className={classes.textField}
-          value={raceBot2}
-          onChange={e => setRaceBot2(e.target.value)}
-          SelectProps={{
-            MenuProps: {
-              className: classes.menu
-            }
-          }}
-          margin="normal"
-        >
-          {Object.keys(RaceId).map(raceId => (
-            <MenuItem key={`raceId:${raceId}`} value={raceId}>
-              {RaceId[raceId]}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          id="uriBot2"
-          label="URI"
-          disabled={disableControls}
-          className={classes.textField}
-          margin="normal"
-          value={uriBot2}
-          onChange={e => setUriBot2(e.target.value)}
-        />
-      </Box>
-      <Button
-        disabled={!!!simStatus}
-        onClick={handleOnClickRun}
-        variant="outlined"
-        className={classes.button}
-      >
-        {disableControls ? "Stop" : "Run"}
-      </Button>
+          {disableControls ? "Stop" : "Run"}
+        </Button>
+      </div>
     </Paper>
   );
 }

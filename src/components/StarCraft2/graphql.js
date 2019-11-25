@@ -17,6 +17,14 @@ export const SimStatusQuery = gql`
   ${SimStatusFields}
 `;
 
+export const ListMapsQuery = gql`
+  query listMaps {
+    listMaps {
+      id
+    }
+  }
+`;
+
 export const RunMutation = gql`
   mutation run($config: ConfigInput!) {
     run(config: $config) {
@@ -38,6 +46,10 @@ export const StopMutation = gql`
 export const ObserveQuery = gql`
   query observe {
     observe {
+      episode
+      step
+      data
+      reward
       simStatus {
         ...SimStatusFields
       }

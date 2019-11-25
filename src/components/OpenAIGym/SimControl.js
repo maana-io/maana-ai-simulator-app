@@ -24,8 +24,6 @@ import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 import UserContext from "../../util/UserContext";
 
 // --- Constants
-const AiSimulatorUri =
-  "https://lastknowngood.knowledge.maana.io:8443/service/b00a2def-69a1-4238-80f7-c7920aa0afd4/graphql";
 
 const RandomAgentUri =
   "https://lastknowngood.knowledge.maana.io:8443/service/01ffc8ee-bbc4-442b-a994-8565774c8167/graphql";
@@ -81,7 +79,6 @@ export default function SimControl({ simStatus }) {
 
   const { loading, error } = useQuery(ListEnvironmentsQuery, {
     onCompleted: data => {
-      setEnvironment(data.listEnvironments[0].id);
       setEnvironments(data.listEnvironments);
     },
     client

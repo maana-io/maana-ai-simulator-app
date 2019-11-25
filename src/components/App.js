@@ -1,8 +1,17 @@
-import { Callback, Home, Login, Logout } from ".";
+// --- External imports
+import React from "react";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 
-import React from "react";
+// Material UI
+import { makeStyles } from "@material-ui/core/styles";
+
+// --- Internal imports
+import { Callback, Home, Login, Logout } from ".";
 import { useAuthContext } from "./Auth";
+
+const useStyles = makeStyles(theme => ({
+  root: {}
+}));
 
 export function App() {
   const location = useLocation();
@@ -10,8 +19,10 @@ export function App() {
   const isActive = authClient.isActive();
   const isAuthenticated = authClient.isAuthenticated();
 
+  const classes = useStyles();
+
   return (
-    <div>
+    <div className={classes.root}>
       {!(isActive && isAuthenticated) ? (
         <Switch>
           {/* special route for auth callback */}

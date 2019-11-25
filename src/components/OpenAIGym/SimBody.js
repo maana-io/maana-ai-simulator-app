@@ -14,24 +14,21 @@ import SimObservation from "./SimObservation";
 import { SimStatusQuery } from "./graphql";
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(3, 2)
-  }
+  root: {}
 }));
 
 export default function SimBody() {
   const client = useContext(SimulatorClientContext);
 
   const { loading, error, data } = useQuery(SimStatusQuery, {
-    pollInterval: 1000,
+    pollInterval: 100000,
     client
   });
 
   const classes = useStyles();
 
   return (
-    <Grid container spacing={3}>
+    <Grid className={classes.root} container spacing={3}>
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
       {data && (

@@ -2,7 +2,7 @@
 import React, { useContext } from "react";
 import { useQuery } from "react-apollo";
 
-import { Status, StatusId } from "@node-sc2/core/constants/enums";
+import { Status } from "@node-sc2/core/constants/enums";
 
 // Material UI
 import Paper from "@material-ui/core/Paper";
@@ -15,6 +15,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 
 // --- Internal imports
+import SimulatorClientContext from "../../util/SimulatorClientContext";
 import { ObserveQuery } from "./graphql";
 
 // --- Constants
@@ -23,41 +24,27 @@ import { ObserveQuery } from "./graphql";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary
-  },
-  container: {
-    display: "flex",
-    flexWrap: "wrap"
+    padding: theme.spacing(1)
   },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 200
+    width: "97%"
   },
-  button: {
-    margin: theme.spacing(1)
-  },
-  listRoot: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
-  },
-  input: {
-    display: "none"
-  }
+  listRoot: {}
 }));
 
 export default function SimObservation({ simStatus }) {
   // --- Hooks
+  const client = useContext(SimulatorClientContext);
 
   const { data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
-    pollInterval: 1000
+    pollInterval: 1000,
     // onCompleted: data => {
     //   console.log("onCompleted2", data);
     // }
+    client
   });
 
   let observation = null;

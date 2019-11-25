@@ -36,7 +36,7 @@ export default function Carla() {
 
   const [carlaToken, setCarlaToken] = useLocalStorage("carla-token", "");
 
-  const [client, setClient] = useState(() => {
+  const [client] = useState(() => {
     const client = createGraphQLClient({
       uri: carlaUri,
       token: carlaToken || UserContext.getAccessToken()

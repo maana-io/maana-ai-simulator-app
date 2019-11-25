@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SimObservation({ simStatus }) {
+  // --- Hooks
   const client = useContext(SimulatorClientContext);
 
   const { loading, error, data } = useQuery(ObserveQuery, {
@@ -50,7 +51,6 @@ export default function SimObservation({ simStatus }) {
   let simStatusState = simStatus;
   if (data) {
     observation = data.observe;
-    console.log("observe", observation);
     simStatusState = observation.simStatus;
   }
 
