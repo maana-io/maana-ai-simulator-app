@@ -14,8 +14,10 @@ import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import ErrorCard from "../ErrorCard";
+import formatArray from "../../util/formatArray";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
 import { ObserveQuery } from "./graphql";
+import { Codes } from "../../util/enums";
 
 // --- Constants
 
@@ -46,14 +48,14 @@ export default function SimObservation({ status }) {
     client
   });
 
-  console.log("status", status);
-
   let observation = null;
   let statusState = status;
   if (data) {
     observation = data.observe;
     statusState = observation.status;
   }
+
+  console.log("status", status, observation);
 
   const classes = useStyles();
 
@@ -67,27 +69,38 @@ export default function SimObservation({ status }) {
       {error && <ErrorCard error={error} />}
       {observation && (
         <Grid container spacing={3}>
-          <Grid item xs={3} sm={3}>
+          <Grid item xs={4} sm={4}>
             <TextField
               id="status"
               label="Status"
               margin="dense"
               disabled={!!!observation}
               className={classes.textField}
-              value={observation ? observation.status.code.id : status.code.id}
+              value={observation ? observation.status.code.id : Codes.Unknown}
               InputProps={{
                 readOnly: true
               }}
             />
           </Grid>
-          <Grid item xs={3} sm={3}>
+          <Grid item xs={4} sm={4}>
             <TextField
-              id="steps"
-              label="Steps"
+              id="episode"
+              label="Episode"
               margin="dense"
-              disabled={!!!observation}
               className={classes.textField}
-              value={observation ? observation.steps : 0}
+              value={observation ? observation.episode : 0}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="step"
+              label="Step"
+              margin="dense"
+              className={classes.textField}
+              value={observation ? observation.step : 0}
               InputProps={{
                 readOnly: true
               }}
@@ -97,11 +110,9 @@ export default function SimObservation({ status }) {
             <Typography variant="subtitle2" display="block" gutterBottom>
               State
             </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >{`[${observation.data.join(", ")}]`}</Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {formatArray(observation.data)}
+            </Typography>
           </Grid>
         </Grid>
       )}

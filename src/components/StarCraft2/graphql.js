@@ -48,9 +48,14 @@ export const StopMutation = gql`
 export const ObserveQuery = gql`
   query observe {
     observe {
+      episode
       step
       data
-      rewards
+      agentStats {
+        lastAction
+        lastReward
+        totalReward
+      }
       status {
         ...StatusFields
       }

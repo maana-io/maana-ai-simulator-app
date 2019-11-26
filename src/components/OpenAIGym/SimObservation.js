@@ -14,6 +14,7 @@ import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import ErrorCard from "../ErrorCard";
+import formatArray from "../../util/formatArray";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
 import { ObserveQuery } from "./graphql";
 import { Codes } from "../../util/enums";
@@ -55,8 +56,6 @@ export default function SimObservation({ status }) {
   }
 
   const classes = useStyles();
-
-  const formatArray = array => `[${array.join(", ")}]`;
 
   // --- Rendering
   return (
