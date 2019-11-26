@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   listRoot: {}
 }));
 
-export default function SimObservation({ simStatus }) {
+export default function SimObservation({ status }) {
   // --- Hooks
   const client = useContext(SimulatorClientContext);
 
@@ -48,16 +48,15 @@ export default function SimObservation({ simStatus }) {
   });
 
   let observation;
-  let simStatusState = simStatus;
+  let statusState = status;
   if (data) {
     observation = data.observe;
-    simStatusState = observation.simStatus;
+    statusState = observation.status;
   }
 
-  // console.log("observation", observation);
-  // console.log("simStatus", simStatus);
-
   const classes = useStyles();
+
+  const formatArray = array => `[${array.join(", ")}]`;
 
   // --- Rendering
   return (
@@ -69,20 +68,20 @@ export default function SimObservation({ simStatus }) {
       {error && <ErrorCard error={error} />}
       {observation && (
         <Grid container spacing={3}>
-          <Grid item xs={3} sm={3}>
+          <Grid item xs={4} sm={4}>
             <TextField
               id="status"
               label="Status"
               margin="dense"
               disabled={!!!observation}
               className={classes.textField}
-              value={observation ? observation.simStatus.code : Codes.Unknown}
+              value={observation ? observation.status.code.id : Codes.Unknown}
               InputProps={{
                 readOnly: true
               }}
             />
           </Grid>
-          <Grid item xs={3} sm={3}>
+          <Grid item xs={4} sm={4}>
             <TextField
               id="episode"
               label="Episode"
@@ -94,7 +93,7 @@ export default function SimObservation({ simStatus }) {
               }}
             />
           </Grid>
-          <Grid item xs={3} sm={3}>
+          <Grid item xs={4} sm={4}>
             <TextField
               id="step"
               label="Step"
@@ -106,13 +105,43 @@ export default function SimObservation({ simStatus }) {
               }}
             />
           </Grid>
-          <Grid item xs={3} sm={3}>
+          <Grid item xs={4} sm={4}>
             <TextField
-              id="reward"
-              label="Reward"
+              id="last-action"
+              label="Last Action"
               margin="dense"
               className={classes.textField}
-              value={observation ? observation.reward : 0}
+              value={formatArray(
+                observation ? observation.agentStats[0].lastAction : 0
+              )}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="last-reward"
+              label="Last Reward"
+              margin="dense"
+              className={classes.textField}
+              value={formatArray(
+                observation ? observation.agentStats[0].lastReward : 0
+              )}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="total-reward"
+              label="Total Reward"
+              margin="dense"
+              className={classes.textField}
+              value={formatArray(
+                observation ? observation.agentStats[0].totalReward : 0
+              )}
               InputProps={{
                 readOnly: true
               }}
@@ -122,19 +151,17 @@ export default function SimObservation({ simStatus }) {
             <Typography variant="subtitle2" display="block" gutterBottom>
               State
             </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >{`[${observation.data.join(", ")}]`}</Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {formatArray(observation.data)}
+            </Typography>
           </Grid>
         </Grid>
       )}
-      {simStatusState.errors.length > 0 && (
+      {statusState.errors.length > 0 && (
         <Grid item xs={12} sm={12}>
           <Typography variant="subtitle1">Errors</Typography>
           <List className={classes.listRoot}>
-            {simStatusState.errors.map((error, i) => {
+            {statusState.errors.map((error, i) => {
               // const jsError = JSON.parse(error);
               return (
                 <ListItem alignItems="flex-start" key={`error:${i}`}>

@@ -57,11 +57,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SimControl({ simStatus }) {
+export default function SimControl({ status }) {
   // --- Hooks
   const client = useContext(SimulatorClientContext);
 
-  const [simStatusState, setSimStatusState] = useState(simStatus);
+  const [statusState, setStatusState] = useState(status);
 
   const [environment, setEnvironment] = useLocalStorage(
     "openai-gym-env",
@@ -87,18 +87,17 @@ export default function SimControl({ simStatus }) {
   const [run] = useMutation(RunMutation, {
     variables: {
       config: {
-        environment,
-        mode,
-        agentUri,
-        token: UserContext.getAccessToken()
+        environmentId: environment,
+        modeId: mode,
+        agents: [{ uri: agentUri, token: UserContext.getAccessToken() }]
       }
     },
-    onCompleted: data => setSimStatusState(data.run),
+    onCompleted: data => setStatusState(data.run),
     client
   });
 
   const [stop] = useMutation(StopMutation, {
-    onCompleted: data => setSimStatusState(data.stop),
+    onCompleted: data => setStatusState(data.stop),
     client
   });
 
@@ -107,10 +106,10 @@ export default function SimControl({ simStatus }) {
   // --- Handlers
 
   const handleOnClickRun = async () => {
-    if (simStatusState.code === Codes.Running) {
+    if (statusState.code.id === Codes.Running) {
       stop();
     } else {
-      setSimStatusState({ ...simStatusState, code: Codes.Starting });
+      setStatusState({ ...statusState, code: { id: Codes.Starting } });
       run();
     }
   };
@@ -118,9 +117,9 @@ export default function SimControl({ simStatus }) {
   // --- Rendering
 
   const disableControls =
-    simStatusState &&
-    (simStatusState.code === Codes.Running ||
-      simStatusState.code === Codes.Starting);
+    statusState &&
+    (statusState.code.id === Codes.Running ||
+      statusState.code.id === Codes.Starting);
 
   return (
     <Paper className={classes.paper}>
@@ -192,7 +191,7 @@ export default function SimControl({ simStatus }) {
       </Grid>
       <div className={classes.buttons}>
         <Button
-          disabled={!!!simStatusState}
+          disabled={!!!statusState}
           onClick={handleOnClickRun}
           variant="contained"
           color={disableControls ? "secondary" : "primary"}

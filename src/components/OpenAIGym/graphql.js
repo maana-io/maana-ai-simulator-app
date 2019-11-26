@@ -1,20 +1,22 @@
 import gql from "graphql-tag";
 
-export const SimStatusFields = gql`
-  fragment SimStatusFields on SimStatus {
+export const StatusFields = gql`
+  fragment StatusFields on Status {
     id
-    code
+    code {
+      id
+    }
     errors
   }
 `;
 
-export const SimStatusQuery = gql`
-  query simStatus {
-    simStatus {
-      ...SimStatusFields
+export const StatusQuery = gql`
+  query status {
+    status {
+      ...StatusFields
     }
   }
-  ${SimStatusFields}
+  ${StatusFields}
 `;
 
 export const ListEnvironmentsQuery = gql`
@@ -28,19 +30,19 @@ export const ListEnvironmentsQuery = gql`
 export const RunMutation = gql`
   mutation run($config: ConfigInput!) {
     run(config: $config) {
-      ...SimStatusFields
+      ...StatusFields
     }
   }
-  ${SimStatusFields}
+  ${StatusFields}
 `;
 
 export const StopMutation = gql`
   mutation stop {
     stop {
-      ...SimStatusFields
+      ...StatusFields
     }
   }
-  ${SimStatusFields}
+  ${StatusFields}
 `;
 
 export const ObserveQuery = gql`
@@ -49,11 +51,15 @@ export const ObserveQuery = gql`
       episode
       step
       data
-      reward
-      simStatus {
-        ...SimStatusFields
+      agentStats {
+        lastAction
+        lastReward
+        totalReward
+      }
+      status {
+        ...StatusFields
       }
     }
   }
-  ${SimStatusFields}
+  ${StatusFields}
 `;
