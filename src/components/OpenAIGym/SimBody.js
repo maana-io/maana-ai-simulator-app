@@ -27,11 +27,13 @@ export default function SimBody() {
 
   const classes = useStyles();
 
+  const showData = data && !loading && !error;
+
   return (
     <Grid className={classes.root} container spacing={3}>
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
-      {data && (
+      {showData && (
         <React.Fragment>
           <Grid item xs={6} sm={6}>
             <SimControl status={data.status} />

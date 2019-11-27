@@ -59,6 +59,8 @@ export default function SimObservation({ status }) {
 
   const classes = useStyles();
 
+  const showObservation = observation && !loading && !error;
+
   // --- Rendering
   return (
     <Paper className={classes.paper}>
@@ -67,8 +69,8 @@ export default function SimObservation({ status }) {
       </Typography>
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
-      {observation && (
-        <Grid container spacing={3}>
+      {showObservation && (
+        <Grid container spacing={1}>
           <Grid item xs={4} sm={4}>
             <TextField
               id="status"
@@ -106,6 +108,54 @@ export default function SimObservation({ status }) {
               }}
             />
           </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="last-action"
+              label="Last Action"
+              margin="dense"
+              className={classes.textField}
+              value={formatArray(
+                observation && observation.agentStats[0]
+                  ? observation.agentStats[0].lastAction
+                  : [0]
+              )}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="last-reward"
+              label="Last Reward"
+              margin="dense"
+              className={classes.textField}
+              value={formatArray(
+                observation && observation.agentStats[0]
+                  ? observation.agentStats[0].lastReward
+                  : [0]
+              )}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={4} sm={4}>
+            <TextField
+              id="total-reward"
+              label="Total Reward"
+              margin="dense"
+              className={classes.textField}
+              value={formatArray(
+                observation && observation.agentStats[0]
+                  ? observation.agentStats[0].totalReward
+                  : [0]
+              )}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
           <Grid item xs={12} sm={12}>
             <Typography variant="subtitle2" display="block" gutterBottom>
               State
@@ -124,10 +174,11 @@ export default function SimObservation({ status }) {
               // const jsError = JSON.parse(error);
               return (
                 <ListItem alignItems="flex-start" key={`error:${i}`}>
-                  <ListItemText
+                  <ErrorCard error={error} />
+                  {/* <ListItemText
                     primaryTypographyProps={{ color: "error" }}
                     primary={error}
-                  />
+                  /> */}
                 </ListItem>
               );
             })}

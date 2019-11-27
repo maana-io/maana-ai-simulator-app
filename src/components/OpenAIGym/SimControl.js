@@ -126,7 +126,7 @@ export default function SimControl({ status }) {
       <Typography gutterBottom variant="h5">
         Control
       </Typography>
-      <Grid container spacing={3}>
+      <Grid container spacing={1}>
         <Grid item xs={12} sm={12}>
           {environments && environments.length > 0 && (
             <TextField

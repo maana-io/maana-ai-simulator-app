@@ -57,6 +57,8 @@ export default function SimObservation({ status }) {
 
   const classes = useStyles();
 
+  const showObservation = observation && !loading && !error;
+
   // --- Rendering
   return (
     <Paper className={classes.paper}>
@@ -65,8 +67,8 @@ export default function SimObservation({ status }) {
       </Typography>
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
-      {observation && (
-        <Grid container spacing={3}>
+      {showObservation && (
+        <Grid container spacing={1}>
           <Grid item xs={4} sm={4}>
             <TextField
               id="status"
@@ -111,7 +113,9 @@ export default function SimObservation({ status }) {
               margin="dense"
               className={classes.textField}
               value={formatArray(
-                observation ? observation.agentStats[0].lastAction : 0
+                observation && observation.agentStats[0]
+                  ? observation.agentStats[0].lastAction
+                  : [0]
               )}
               InputProps={{
                 readOnly: true
@@ -125,7 +129,9 @@ export default function SimObservation({ status }) {
               margin="dense"
               className={classes.textField}
               value={formatArray(
-                observation ? observation.agentStats[0].lastReward : 0
+                observation && observation.agentStats[0]
+                  ? observation.agentStats[0].lastReward
+                  : [0]
               )}
               InputProps={{
                 readOnly: true
@@ -139,7 +145,9 @@ export default function SimObservation({ status }) {
               margin="dense"
               className={classes.textField}
               value={formatArray(
-                observation ? observation.agentStats[0].totalReward : 0
+                observation && observation.agentStats[0]
+                  ? observation.agentStats[0].totalReward
+                  : [0]
               )}
               InputProps={{
                 readOnly: true

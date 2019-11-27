@@ -138,32 +138,24 @@ export default function SimControl({ status }) {
     if (statusState.code.id === Codes.Running) {
       stop();
     } else {
-      // if (!validUrl.isUri(uriAgent1) && !validUrl.isUri(uriAgent2)) {
-      //   setStatusState({
-      //     code: { id: Codes.Error },
-      //     errors: ["There must be at least one valid agent URI"]
-      //   });
-      //   return;
-      // }
-      setStatusState({ ...status, code: { id: Codes.Running } });
+      setStatusState({ ...status, code: { id: Codes.Starting } });
       run();
     }
   };
 
   // --- Rendering
 
-  const disableControls = false;
-  // simStatus &&
-  // (simStatus.status === Status.IN_GAME ||
-  //   simStatus.status === Status.LAUNCHED ||
-  //   simStatus.status === Status.INIT_GAME);
+  const disableControls =
+    statusState &&
+    (statusState.code.id === Codes.Starting ||
+      statusState.code.id === Codes.Running);
 
   return (
     <Paper className={classes.paper}>
       <Typography gutterBottom variant="h5">
         Control
       </Typography>
-      <Grid container spacing={3}>
+      <Grid container spacing={1}>
         <Grid item xs={12} sm={12}>
           {maps && maps.length !== 0 && (
             <TextField
@@ -319,7 +311,6 @@ export default function SimControl({ status }) {
       </Grid>
       <div className={classes.buttons}>
         <Button
-          disabled={!!!statusState}
           onClick={handleOnClickRun}
           variant="contained"
           color={disableControls ? "secondary" : "primary"}
