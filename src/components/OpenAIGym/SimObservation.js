@@ -1,6 +1,7 @@
 // --- External imports
 import React, { useContext } from "react";
 import { useQuery } from "react-apollo";
+import Ansi from "ansi-to-react";
 
 // Material UI
 import Paper from "@material-ui/core/Paper";
@@ -32,7 +33,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     width: "97%"
   },
-  listRoot: {}
+  listRoot: {},
+  ansi: {
+    display: "block"
+  }
 }));
 
 export default function SimObservation({ status }) {
@@ -154,14 +158,28 @@ export default function SimObservation({ status }) {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={12}>
-            <Typography variant="subtitle2" display="block" gutterBottom>
-              State
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {formatArray(observation.data)}
-            </Typography>
-          </Grid>
+          {observation.data && (
+            <Grid item xs={12} sm={12}>
+              <Typography variant="subtitle2" display="block" gutterBottom>
+                State
+              </Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {formatArray(observation.data)}
+              </Typography>
+            </Grid>
+          )}
+          {observation.render && (
+            <Grid item xs={12} sm={12}>
+              <Typography variant="subtitle2" display="block" gutterBottom>
+                Render
+              </Typography>
+              {observation.render.split("\n").map((line, i) => (
+                <Ansi className={classes.ansi} key={i}>
+                  {line}
+                </Ansi>
+              ))}
+            </Grid>
+          )}
         </Grid>
       )}
       {statusState.errors.length > 0 && (

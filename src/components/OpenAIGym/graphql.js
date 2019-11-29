@@ -56,6 +56,7 @@ export const ObserveQuery = gql`
         lastReward
         totalReward
       }
+      render
       status {
         ...StatusFields
       }
