@@ -1,16 +1,14 @@
-# Maana-Auth-Web-Client-Template (React)
+# Maana Q AI Simulator
 
-Bare bones React app with unified auth0/keycloak authentication.
+A web application for running simulations to develop and drive Q-based intelligent agents. Each simulator is custom-coded but follows a similar patterns and therefore easy to reuse and extend components.
 
 ## Functionality
 
-User must login in order to see 'protected' page.
-Once user is authenticated, they can logout.
-Once logout is clicked, the user will be immediately redirected to login.
+User must login to a Q instance. It is assumed that URIs refer to this instance and the authentication token will be reused. Otherwise, it is up to the user and individual simulator/agent to supply the correct access tokens. Q instance is configured in the environment settings.
 
-## Prerequisites
-- A client must exist on the authentication server that can provide an OAuth 'implicit flow'.
-- There must be a registered redirect URL on the client configured on the authetication server (see 'Understanding OAuth Implicity Flow and Redirect URL security' section).
+Each simulator must have an accessible GraphQL endpoint URI and associated token. If no token is provided, the Q instance auth token is used if the base URI matches the Q instance.
+
+Each simulator will require GraphQL endpoint information for each agent, which, again, is assumed to be Q-based and will reuse the token for the signed-in instance unless overridden with a custom key.
 
 ## Env variables that must be set
 
@@ -30,9 +28,36 @@ An example for keycloak:
 - REACT_APP_PORTAL_AUTH_CLIENT_ID=(Client name)
 - REACT_APP_PORTAL_AUTH_DOMAIN=(Key cloak url, usually ending in your port number)
 
-## Understanding OAuth Implicit Flow and Redirect URL security
+Copy the `.env.template` file to a `.env` file (excluded from Git) and add the correct settings.
 
-In order for OAuth implicit flow to be secure, the redirect URL given to the auth
-provider during login (where the token will be sent back to) MUST be registered with that auth provider ahead of time. If it is not, it should consider the request invalid and not return the token.
+## Build
 
-This is important to note here--this app will not be able to login unless your auth0 or keycloak client has this app's URL added to its list of valid redirect URLs. If you're managing keycloak or auth0 in house, you will need to configure this yourself, otherwise will need to contact the entity managing your auth, and have them add the redirect URL. Please research this, as there are many ways to provide greater flexibility or rigidity around the URLs.
+To build the simulator UI, simply change to the root directory of the repository and:
+
+```bash
+npm i
+```
+
+## Build Docker
+
+To create a Docker image:
+
+```bash
+docker build -t maana-ai-simulator-app:v1 .
+```
+
+## Run
+
+```bash
+npm start
+```
+
+and visit (http://localhost:3000)[http://localhost:3000], if not taken there automatically.
+
+## Run Docker
+
+```bash
+docker run -it -v ${PWD}:/app -v /app/node_modules -p 3000:3000 --rm maana-ai-simulator-app:v1
+```
+
+and visit (http://localhost:3000)[http://localhost:3000]
