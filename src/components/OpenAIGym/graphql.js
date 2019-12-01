@@ -11,8 +11,8 @@ export const StatusFields = gql`
 `;
 
 export const StatusQuery = gql`
-  query status {
-    status {
+  query status($sessionId: ID!) {
+    status(sessionId: $sessionId) {
       ...StatusFields
     }
   }
@@ -37,8 +37,8 @@ export const RunMutation = gql`
 `;
 
 export const StopMutation = gql`
-  mutation stop {
-    stop {
+  mutation stop($sessionId: ID!) {
+    stop(sessionId: $sessionId) {
       ...StatusFields
     }
   }
@@ -46,8 +46,8 @@ export const StopMutation = gql`
 `;
 
 export const ObserveQuery = gql`
-  query observe {
-    observe {
+  query observe($sessionId: ID!) {
+    observe(sessionId: $sessionId) {
       episode
       step
       data

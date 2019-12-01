@@ -39,6 +39,11 @@ export default function OpenAIGym() {
     ""
   );
 
+  const [openAiGymSessionId, setOpenAiGymSessionId] = useLocalStorage(
+    "openai-gym-session-id",
+    UserContext.getUserId()
+  );
+
   const [client] = useState(() => {
     const client = createGraphQLClient({
       uri: openAiGymUri,
@@ -78,11 +83,28 @@ export default function OpenAIGym() {
               onChange={e => setOpenAiGymToken(e.target.value)}
             />
           </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              id="openai-gym-session-id"
+              label="Session ID"
+              margin="dense"
+              className={classes.textField}
+              value={openAiGymSessionId}
+              onChange={e => setOpenAiGymSessionId(e.target.value)}
+            />
+          </Grid>
         </Grid>
         <Grid item xs={9} sm={9}>
           {!!!client && "Please set a valid client"}
           {!!client && (
-            <SimulatorClientContext.Provider value={client}>
+            <SimulatorClientContext.Provider
+              value={{
+                client,
+                uri: openAiGymUri,
+                token: openAiGymToken,
+                sessionId: openAiGymSessionId
+              }}
+            >
               <SimBody />
             </SimulatorClientContext.Provider>
           )}

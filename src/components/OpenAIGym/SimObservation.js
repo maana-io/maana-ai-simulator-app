@@ -42,12 +42,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function SimObservation() {
   // --- Hooks
-  const client = useContext(SimulatorClientContext);
+  const simulatorClientContext = useContext(SimulatorClientContext);
+  const { client, sessionId } = simulatorClientContext;
 
   const { loading, error, data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
     pollInterval: 500,
-    client
+    client,
+    variables: { sessionId }
   });
 
   const classes = useStyles();
@@ -60,6 +62,16 @@ export default function SimObservation() {
       <Typography gutterBottom variant="h5">
         Observation
       </Typography>
+      <TextField
+        id="session-id"
+        label="Session"
+        margin="dense"
+        className={classes.textField}
+        value={sessionId}
+        InputProps={{
+          readOnly: true
+        }}
+      />
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
       {observation && (

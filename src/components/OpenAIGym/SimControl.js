@@ -60,7 +60,8 @@ const useStyles = makeStyles(theme => ({
 
 export default () => {
   // --- Hooks
-  const client = useContext(SimulatorClientContext);
+  const simulatorClientContext = useContext(SimulatorClientContext);
+  const { client, sessionId } = simulatorClientContext;
   const gymContext = useContext(GymContext);
 
   const [environment, setEnvironment] = useLocalStorage(
@@ -85,20 +86,22 @@ export default () => {
   });
 
   const [run] = useMutation(RunMutation, {
+    onCompleted: data => gymContext.setStatus(data.run),
+    client,
     variables: {
       config: {
+        sessionId,
         environmentId: environment,
         modeId: mode,
         agents: [{ uri: agentUri, token: UserContext.getAccessToken() }]
       }
-    },
-    onCompleted: data => gymContext.setStatus(data.run),
-    client
+    }
   });
 
   const [stop] = useMutation(StopMutation, {
     onCompleted: data => gymContext.setStatus(data.stop),
-    client
+    client,
+    variables: { sessionId }
   });
 
   const classes = useStyles();

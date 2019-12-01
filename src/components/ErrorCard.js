@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ErrorCard({ error: rawError }) {
-  console.log("ErrorCard: rawError:", rawError);
+  console.log("ErrorCard: rawError:", JSON.stringify(rawError, null, 2));
 
   let error = rawError;
   let otherError;
@@ -46,7 +46,7 @@ export default function ErrorCard({ error: rawError }) {
     message = networkError["bodyText"];
   } else if (graphQLErrors) {
     title = "GraphQL Error";
-    subheader = graphQLErrors[0].path.join(" / ");
+    subheader = graphQLErrors[0].path ? graphQLErrors[0].path.join(" / ") : "";
     message = error["message"];
   } else if (otherError) {
     console.log("otherError", otherError);

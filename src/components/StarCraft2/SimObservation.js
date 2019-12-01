@@ -55,8 +55,6 @@ export default function SimObservation({ status }) {
     statusState = observation.status;
   }
 
-  console.log("status", status, observation);
-
   const classes = useStyles();
 
   const showObservation = observation && !loading && !error;
