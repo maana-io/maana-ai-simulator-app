@@ -19,9 +19,10 @@ import Grid from "@material-ui/core/Grid";
 
 // --- Internal imports
 import SimulatorClientContext from "../../util/SimulatorClientContext";
+import UserContext from "../../util/UserContext";
 import { Codes, Modes } from "../../util/enums";
 import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
-import UserContext from "../../util/UserContext";
+import GymContext from "./state/GymContext";
 
 // --- Constants
 
@@ -57,11 +58,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SimControl({ status }) {
+export default () => {
   // --- Hooks
   const client = useContext(SimulatorClientContext);
-
-  const [statusState, setStatusState] = useState(status);
+  const gymContext = useContext(GymContext);
 
   const [environment, setEnvironment] = useLocalStorage(
     "openai-gym-env",
@@ -92,12 +92,12 @@ export default function SimControl({ status }) {
         agents: [{ uri: agentUri, token: UserContext.getAccessToken() }]
       }
     },
-    onCompleted: data => setStatusState(data.run),
+    onCompleted: data => gymContext.setStatus(data.run),
     client
   });
 
   const [stop] = useMutation(StopMutation, {
-    onCompleted: data => setStatusState(data.stop),
+    onCompleted: data => gymContext.setStatus(data.stop),
     client
   });
 
@@ -106,10 +106,13 @@ export default function SimControl({ status }) {
   // --- Handlers
 
   const handleOnClickRun = async () => {
-    if (statusState.code.id === Codes.Running) {
+    if (gymContext.status.code.id === Codes.Running) {
       stop();
     } else {
-      setStatusState({ ...statusState, code: { id: Codes.Starting } });
+      gymContext.setStatus({
+        ...gymContext.status,
+        code: { id: Codes.Starting }
+      });
       run();
     }
   };
@@ -117,9 +120,9 @@ export default function SimControl({ status }) {
   // --- Rendering
 
   const disableControls =
-    statusState &&
-    (statusState.code.id === Codes.Running ||
-      statusState.code.id === Codes.Starting);
+    gymContext.status &&
+    (gymContext.status.code.id === Codes.Running ||
+      gymContext.status.code.id === Codes.Starting);
 
   return (
     <Paper className={classes.paper}>
@@ -191,7 +194,7 @@ export default function SimControl({ status }) {
       </Grid>
       <div className={classes.buttons}>
         <Button
-          disabled={!!!statusState}
+          disabled={!!!gymContext.status}
           onClick={handleOnClickRun}
           variant="contained"
           color={disableControls ? "secondary" : "primary"}
@@ -202,4 +205,4 @@ export default function SimControl({ status }) {
       </div>
     </Paper>
   );
-}
+};

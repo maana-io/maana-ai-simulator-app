@@ -1,5 +1,5 @@
 // --- External imports
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from "react-apollo";
 import Ansi from "ansi-to-react";
 
@@ -16,9 +16,10 @@ import Grid from "@material-ui/core/Grid";
 // --- Internal imports
 import ErrorCard from "../ErrorCard";
 import formatArray from "../../util/formatArray";
-import SimulatorClientContext from "../../util/SimulatorClientContext";
-import { ObserveQuery } from "./graphql";
 import { Codes } from "../../util/enums";
+import SimulatorClientContext from "../../util/SimulatorClientContext";
+import GymContext from "./state/GymContext";
+import { ObserveQuery } from "./graphql";
 
 // --- Constants
 
@@ -39,29 +40,19 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SimObservation({ status }) {
+export default function SimObservation() {
   // --- Hooks
   const client = useContext(SimulatorClientContext);
 
   const { loading, error, data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
-    pollInterval: 1000,
-    // onCompleted: data => {
-    //   console.log("onCompleted2", data);
-    // }
+    pollInterval: 500,
     client
   });
 
-  let observation;
-  let statusState = status;
-  if (data) {
-    observation = data.observe;
-    statusState = observation.status;
-  }
-
   const classes = useStyles();
 
-  const showObservation = observation && !loading && !error;
+  const observation = data && !loading && !!!error ? data.observe : null;
 
   // --- Rendering
   return (
@@ -71,16 +62,15 @@ export default function SimObservation({ status }) {
       </Typography>
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
-      {showObservation && (
+      {observation && (
         <Grid container spacing={1}>
           <Grid item xs={4} sm={4}>
             <TextField
               id="status"
               label="Status"
               margin="dense"
-              disabled={!!!observation}
               className={classes.textField}
-              value={observation ? observation.status.code.id : Codes.Unknown}
+              value={observation.status.code.id}
               InputProps={{
                 readOnly: true
               }}
@@ -92,7 +82,7 @@ export default function SimObservation({ status }) {
               label="Episode"
               margin="dense"
               className={classes.textField}
-              value={observation ? observation.episode : 0}
+              value={observation.episode}
               InputProps={{
                 readOnly: true
               }}
@@ -104,7 +94,7 @@ export default function SimObservation({ status }) {
               label="Step"
               margin="dense"
               className={classes.textField}
-              value={observation ? observation.step : 0}
+              value={observation.step}
               InputProps={{
                 readOnly: true
               }}
@@ -117,7 +107,7 @@ export default function SimObservation({ status }) {
               margin="dense"
               className={classes.textField}
               value={formatArray(
-                observation && observation.agentStats[0]
+                observation.agentStats[0]
                   ? observation.agentStats[0].lastAction
                   : [0]
               )}
@@ -133,7 +123,7 @@ export default function SimObservation({ status }) {
               margin="dense"
               className={classes.textField}
               value={formatArray(
-                observation && observation.agentStats[0]
+                observation.agentStats[0]
                   ? observation.agentStats[0].lastReward
                   : [0]
               )}
@@ -149,7 +139,7 @@ export default function SimObservation({ status }) {
               margin="dense"
               className={classes.textField}
               value={formatArray(
-                observation && observation.agentStats[0]
+                observation.agentStats[0]
                   ? observation.agentStats[0].totalReward
                   : [0]
               )}
@@ -180,24 +170,24 @@ export default function SimObservation({ status }) {
               ))}
             </Grid>
           )}
-        </Grid>
-      )}
-      {statusState.errors.length > 0 && (
-        <Grid item xs={12} sm={12}>
-          <Typography variant="subtitle1">Errors</Typography>
-          <List className={classes.listRoot}>
-            {statusState.errors.map((error, i) => {
-              // const jsError = JSON.parse(error);
-              return (
-                <ListItem alignItems="flex-start" key={`error:${i}`}>
-                  <ListItemText
-                    primaryTypographyProps={{ color: "error" }}
-                    primary={error}
-                  />
-                </ListItem>
-              );
-            })}
-          </List>
+          {observation.status.errors.length > 0 && (
+            <Grid item xs={12} sm={12}>
+              <Typography variant="subtitle1">Errors</Typography>
+              <List className={classes.listRoot}>
+                {observation.status.errors.map((error, i) => {
+                  // const jsError = JSON.parse(error);
+                  return (
+                    <ListItem alignItems="flex-start" key={`error:${i}`}>
+                      <ListItemText
+                        primaryTypographyProps={{ color: "error" }}
+                        primary={error}
+                      />
+                    </ListItem>
+                  );
+                })}
+              </List>
+            </Grid>
+          )}
         </Grid>
       )}
     </Paper>

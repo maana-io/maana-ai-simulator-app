@@ -1,5 +1,5 @@
 // --- External imports
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { useQuery } from "react-apollo";
 
 // Material UI
@@ -9,21 +9,54 @@ import Grid from "@material-ui/core/Grid";
 // --- Internal imports
 import ErrorCard from "../ErrorCard";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
+import { Codes, Modes } from "../../util/enums";
+import GymContext from "./state/GymContext";
+import gymReducer from "./state/gymReducer";
 import SimControl from "./SimControl";
 import SimObservation from "./SimObservation";
 import { StatusQuery } from "./graphql";
+import { SET_STATUS } from "./state/types";
 
 const useStyles = makeStyles(theme => ({
   root: {}
 }));
 
+const initialStatus = {
+  id: "",
+  code: { id: Codes.Unknown },
+  errors: []
+};
+
 export default function SimBody() {
+  // Manage some global (to the gym simulator) state
+  const [state, dispatch] = useReducer(gymReducer, initialStatus);
+
+  const setStatus = status => dispatch({ type: SET_STATUS, payload: status });
+
+  // Use the GraphQL client that has been configured for this simulator
   const client = useContext(SimulatorClientContext);
 
+  // Poll for the status
   const { loading, error, data } = useQuery(StatusQuery, {
-    pollInterval: 100000,
+    fetchPolicy: "no-cache",
+    pollInterval: 1000,
     client
+    // NOTE: would use the 'onCompleted' callback to update status, but
+    // at the time of writing, it doesn't get called when polling, so
+    // I'm using an 'effect' instead
+    // onCompleted: data => {
+    //   if (data && data.status) {
+    //     setStatus(data.status);
+    //   }
+    // }
   });
+
+  // Update when the status changes
+  useEffect(() => {
+    if (data && data.status) {
+      setStatus(data.status);
+    }
+  }, [data]);
 
   const classes = useStyles();
 
@@ -34,14 +67,14 @@ export default function SimBody() {
       {loading && "Loading simulator...."}
       {error && <ErrorCard error={error} />}
       {showData && (
-        <React.Fragment>
+        <GymContext.Provider value={{ status: state.status, setStatus }}>
           <Grid item xs={6} sm={6}>
-            <SimControl status={data.status} />
+            <SimControl />
           </Grid>
           <Grid item xs={6} sm={6}>
-            <SimObservation status={data.status} />
+            <SimObservation />
           </Grid>
-        </React.Fragment>
+        </GymContext.Provider>
       )}
     </Grid>
   );
