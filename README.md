@@ -43,7 +43,7 @@ npm i
 To create a Docker image:
 
 ```bash
-docker build -t maana-ai-simulator-app:v1 .
+docker build -t maanainc/maana-ai-simulator-app:v1 .
 ```
 
 ## Run
@@ -57,7 +57,7 @@ and visit (http://localhost:3000)[http://localhost:3000], if not taken there aut
 ## Run Docker
 
 ```bash
-docker run -it -v ${PWD}:/app -v /app/node_modules -p 3000:3000 --rm maana-ai-simulator-app:v1
+docker run -it -v ${PWD}:/app -v /app/node_modules -p 3000:3000 --rm maanainc/maana-ai-simulator-app:v1
 ```
 
 and visit (http://localhost:3000)[http://localhost:3000]

@@ -112,7 +112,7 @@ export default function SimObservation() {
               }}
             />
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={3} sm={3}>
             <TextField
               id="last-action"
               label="Last Action"
@@ -128,7 +128,7 @@ export default function SimObservation() {
               }}
             />
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={3} sm={3}>
             <TextField
               id="last-reward"
               label="Last Reward"
@@ -144,7 +144,7 @@ export default function SimObservation() {
               }}
             />
           </Grid>
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={3} sm={3}>
             <TextField
               id="total-reward"
               label="Total Reward"
@@ -155,6 +155,22 @@ export default function SimObservation() {
                   ? observation.agentStats[0].totalReward
                   : [0]
               )}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={3} sm={3}>
+            <TextField
+              id="score"
+              label="Score"
+              margin="dense"
+              className={classes.textField}
+              value={
+                observation.agentStats[0]
+                  ? observation.agentStats[0].score.toFixed(2)
+                  : 0.0
+              }
               InputProps={{
                 readOnly: true
               }}

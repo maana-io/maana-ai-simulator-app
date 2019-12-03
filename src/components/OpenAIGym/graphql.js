@@ -52,6 +52,7 @@ export const ObserveQuery = gql`
       step
       data
       agentStats {
+        score
         lastAction
         lastReward
         totalReward
