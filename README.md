@@ -43,7 +43,7 @@ npm i
 To create a Docker image:
 
 ```bash
-docker build -t maanainc/maana-ai-simulator-app:v1 .
+docker build -t maana-ai-simulator-app:v1 .
 ```
 
 ## Run
@@ -57,7 +57,23 @@ and visit (http://localhost:3000)[http://localhost:3000], if not taken there aut
 ## Run Docker
 
 ```bash
-docker run -it -v ${PWD}:/app -v /app/node_modules -p 3000:3000 --rm maanainc/maana-ai-simulator-app:v1
+docker run -it -v ${PWD}:/app -v /app/node_modules -p 3000:80 --rm maana-ai-simulator-app:v1
 ```
 
 and visit (http://localhost:3000)[http://localhost:3000]
+
+The standard method of deploying a Q service to a Kubernetes cluster is to use the [Maana Q CLI's `mdeploy` command](https://github.com/maana-io/q-cli#cli-mdeploy):
+
+```bash
+gql mdeploy
+```
+
+and follow the prompts, resulting in something resembling:
+
+```bash
+Deploying the service maana-ai-simulator-app:v1.0.5
+Located in .
+Publishing to services.azurecr.io
+Number Of Pods: 1
+Exposing port 80
+```
