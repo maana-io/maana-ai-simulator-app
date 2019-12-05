@@ -26,26 +26,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ErrorCard({ error: rawError }) {
-  console.log("ErrorCard: rawError:", JSON.stringify(rawError, null, 2));
-
   let error = rawError;
   let otherError;
   if (typeof rawError === "string") {
     try {
-      otherError = JSON.parse(rawError);
+      error = JSON.parse(rawError);
+      console.log("ErrorCard: error:", JSON.stringify(error, null, 2));
     } catch {
       otherError = rawError;
+      console.log("ErrorCard: otherError:", otherError);
     }
   }
   const graphQLErrors = error["graphQLErrors"];
   const networkError = error["networkError"];
 
-  let message;
+  let message = error["message"];
   let title;
   let subheader;
 
   if (networkError) {
-    title = "Network Error";
+    title = message || "Network Error";
     subheader = networkError["statusCode"];
     message = networkError["bodyText"];
   } else if (graphQLErrors) {
@@ -59,7 +59,7 @@ export default function ErrorCard({ error: rawError }) {
     message = JSON.stringify(otherError["target"]);
   } else {
     title = "Error";
-    subheader = "message";
+    subheader = message || "message";
     message = rawError;
   }
 
