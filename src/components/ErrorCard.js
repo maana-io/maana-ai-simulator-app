@@ -31,7 +31,11 @@ export default function ErrorCard({ error: rawError }) {
   let error = rawError;
   let otherError;
   if (typeof rawError === "string") {
-    otherError = JSON.parse(rawError);
+    try {
+      otherError = JSON.parse(rawError);
+    } catch {
+      otherError = rawError;
+    }
   }
   const graphQLErrors = error["graphQLErrors"];
   const networkError = error["networkError"];

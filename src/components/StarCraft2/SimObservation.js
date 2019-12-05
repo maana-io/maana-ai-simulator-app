@@ -37,15 +37,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function SimObservation({ status }) {
   // --- Hooks
-  const client = useContext(SimulatorClientContext);
+  // Use the GraphQL client that has been configured for this simulator
+  const simulatorClientContext = useContext(SimulatorClientContext);
+  const { client, sessionId } = simulatorClientContext;
 
   const { loading, error, data } = useQuery(ObserveQuery, {
     fetchPolicy: "no-cache",
-    pollInterval: 1000,
-    // onCompleted: data => {
-    //   console.log("onCompleted2", data);
-    // }
-    client
+    pollInterval: 500,
+    client,
+    variables: { sessionId }
   });
 
   let observation = null;

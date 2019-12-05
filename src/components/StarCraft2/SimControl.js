@@ -57,7 +57,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function SimControl({ status }) {
   // --- Hooks
-  const client = useContext(SimulatorClientContext);
+  const simulatorClientContext = useContext(SimulatorClientContext);
+  const { client, sessionId } = simulatorClientContext;
 
   const [statusState, setStatusState] = useState(status);
 
@@ -105,6 +106,7 @@ export default function SimControl({ status }) {
   const [run] = useMutation(RunMutation, {
     variables: {
       config: {
+        sessionId,
         environmentId: map,
         modeId: mode,
         agents: [

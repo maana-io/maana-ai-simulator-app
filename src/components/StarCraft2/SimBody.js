@@ -18,11 +18,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SimBody() {
-  const client = useContext(SimulatorClientContext);
+  // Use the GraphQL client that has been configured for this simulator
+  const simulatorClientContext = useContext(SimulatorClientContext);
+  const { client, sessionId } = simulatorClientContext;
 
+  // Poll for the status
   const { loading, error, data } = useQuery(StatusQuery, {
+    fetchPolicy: "no-cache",
     pollInterval: 1000,
-    client
+    client,
+    variables: { sessionId }
+    // NOTE: would use the 'onCompleted' callback to update status, but
+    // at the time of writing, it doesn't get called when polling, so
+    // I'm using an 'effect' instead
+    // onCompleted: data => {
+    //   if (data && data.status) {
+    //     setStatus(data.status);
+    //   }
+    // }
   });
 
   const classes = useStyles();

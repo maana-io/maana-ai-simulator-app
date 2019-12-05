@@ -29,20 +29,25 @@ const useStyles = makeStyles(theme => ({
 export default function StarCraft2() {
   // --- Hooks
 
-  const [starcraft2Uri, setStarcraft2Uri] = useLocalStorage(
+  const [starCraft2Uri, setStarcraft2Uri] = useLocalStorage(
     "starcraft2-uri",
     process.env.REACT_APP_SIMULATOR_STARCRAFT2_ENDPOINT
   );
 
-  const [starcraft2Token, setStarcraft2Token] = useLocalStorage(
+  const [starCraft2Token, setStarcraft2Token] = useLocalStorage(
     "starcraft2-token",
     ""
   );
 
+  const [starCraft2SessionId, setStarCraft2SessionId] = useLocalStorage(
+    "starcraft2-session-id",
+    UserContext.getUserId()
+  );
+
   const [client] = useState(() => {
     const client = createGraphQLClient({
-      uri: starcraft2Uri,
-      token: starcraft2Token || UserContext.getAccessToken()
+      uri: starCraft2Uri,
+      token: starCraft2Token || UserContext.getAccessToken()
     });
     return client;
   });
@@ -64,7 +69,7 @@ export default function StarCraft2() {
               label="Starcraft II URI"
               margin="dense"
               className={classes.textField}
-              value={starcraft2Uri}
+              value={starCraft2Uri}
               onChange={e => setStarcraft2Uri(e.target.value)}
             />
           </Grid>
@@ -74,15 +79,32 @@ export default function StarCraft2() {
               label="Starcraft II Token"
               margin="dense"
               className={classes.textField}
-              value={starcraft2Token}
+              value={starCraft2Token}
               onChange={e => setStarcraft2Token(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <TextField
+              id="starcraft2-session-id"
+              label="Session ID"
+              margin="dense"
+              className={classes.textField}
+              value={starCraft2SessionId}
+              onChange={e => setStarCraft2SessionId(e.target.value)}
             />
           </Grid>
         </Grid>
         <Grid item xs={9} sm={9}>
           {!!!client && "Please set a valid client"}
           {!!client && (
-            <SimulatorClientContext.Provider value={client}>
+            <SimulatorClientContext.Provider
+              value={{
+                client,
+                uri: starCraft2Uri,
+                token: starCraft2Token,
+                sessionId: starCraft2SessionId
+              }}
+            >
               <SimBody />
             </SimulatorClientContext.Provider>
           )}
