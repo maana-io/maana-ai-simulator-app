@@ -23,6 +23,7 @@ import { Race } from "./enums";
 import SimulatorClientContext from "../../util/SimulatorClientContext";
 import { ListEnvironmentsQuery, RunMutation, StopMutation } from "./graphql";
 import UserContext from "../../util/UserContext";
+import { CodeGenerator } from "@babel/generator";
 
 // --- Constants
 
@@ -128,7 +129,10 @@ export default function SimControl({ status }) {
   });
 
   const [stop] = useMutation(StopMutation, {
-    onCompleted: data => setStatusState(data.run),
+    variables: {
+      sessionId
+    },
+    onCompleted: data => setStatusState(data.stop),
     client
   });
 
@@ -137,7 +141,10 @@ export default function SimControl({ status }) {
   // --- Handlers
 
   const handleOnClickRun = async () => {
-    if (statusState.code.id === Codes.Running) {
+    if (
+      statusState.code.id === Codes.Running ||
+      statusState.code.id === Codes.Starting
+    ) {
       stop();
     } else {
       setStatusState({ ...status, code: { id: Codes.Starting } });

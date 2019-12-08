@@ -112,11 +112,11 @@ export default function SimObservation({ status }) {
               label="Last Action"
               margin="dense"
               className={classes.textField}
-              value={formatArray(
+              value={
                 observation && observation.agentStats[0]
                   ? observation.agentStats[0].lastAction
                   : [0]
-              )}
+              }
               InputProps={{
                 readOnly: true
               }}
@@ -128,11 +128,11 @@ export default function SimObservation({ status }) {
               label="Last Reward"
               margin="dense"
               className={classes.textField}
-              value={formatArray(
+              value={
                 observation && observation.agentStats[0]
                   ? observation.agentStats[0].lastReward
                   : [0]
-              )}
+              }
               InputProps={{
                 readOnly: true
               }}
@@ -144,11 +144,11 @@ export default function SimObservation({ status }) {
               label="Total Reward"
               margin="dense"
               className={classes.textField}
-              value={formatArray(
+              value={
                 observation && observation.agentStats[0]
                   ? observation.agentStats[0].totalReward
                   : [0]
-              )}
+              }
               InputProps={{
                 readOnly: true
               }}
