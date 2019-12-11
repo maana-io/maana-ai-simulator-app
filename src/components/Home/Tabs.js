@@ -83,10 +83,10 @@ export default function SimpleTabs() {
         <Simulator />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        {/* <Carla /> */}
+        <Carla />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        {/* <OpenAIGym /> */}
+        <OpenAIGym />
       </TabPanel>
       <TabPanel value={value} index={3}>
         <StarCraft2 />

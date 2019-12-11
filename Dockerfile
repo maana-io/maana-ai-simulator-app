@@ -19,7 +19,7 @@ RUN npm install
 RUN npm install react-scripts@3.0.1 -g
 
 COPY ./ /app/
-COPY ./.env.prod /app/.env
+COPY ./.env /app/.env
 COPY ./nginx.conf /nginx.conf
 
 RUN npm run build
